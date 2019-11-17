@@ -4,7 +4,7 @@ Example workflow yml:
 ```yml
 name: CWTools CI
 
-on: [pull_request]
+on: [pull_request] # also works with push
 
 jobs:
   cwtools_job:
