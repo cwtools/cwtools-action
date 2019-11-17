@@ -141,8 +141,8 @@ def run_cwtools
 end
 
 def run
-  unless defined?(@GITHUB_TOKEN) && !@GITHUB_TOKEN.blank?
-    raise "GITHUB_TOKEN environment variable has not been defined or is blank"
+  unless defined?(@GITHUB_TOKEN)
+    raise "GITHUB_TOKEN environment variable has not been defined"
   end
   id = create_check()
   begin
