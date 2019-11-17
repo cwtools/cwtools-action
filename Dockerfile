@@ -12,14 +12,5 @@ COPY lib /action/lib
 RUN apt-get update && \
   apt-get -y install \
   ruby bash git wget p7zip
-RUN mkdir -p /src
-
-RUN git clone --depth=1 --single-branch --branch CLI https://github.com/tboby/cwtools.git /src/cwtools
-WORKDIR /src/cwtools/CWToolsCLI
-RUN dotnet tool restore
-RUN dotnet paket restore
-WORKDIR /
-
-RUN git clone --depth=1 https://github.com/tboby/cwtools-hoi4-config.git /src/cwtools-hoi4-config
 
 ENTRYPOINT ["/action/lib/entrypoint.sh"]
