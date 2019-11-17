@@ -133,6 +133,8 @@ def run_cwtools
 
       if annotation_level == "failure"
         conclusion = "failure"
+      elsif conclusion != "failure" && annotation_level == "warning"
+        conclusion = "neutral"
       end
 
       if location["startLine"] == location["endLine"]
