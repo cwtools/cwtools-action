@@ -127,6 +127,9 @@ def run_cwtools
       message = offense["category"] + ": " + offense["message"]
       location = offense["position"]
       annotation_level = @annotation_levels[severity]
+      if annotation_level != "notice" && annotation_level != "warning" && annotation_level != "failure"
+        annotation_level = "notice"
+      end
       count = count + 1
 
       if annotation_level == "failure"
