@@ -1,0 +1,6 @@
+# action.yml
+name: 'CWTools Action'
+description: 'Run CWTools on your HoI4 code'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
