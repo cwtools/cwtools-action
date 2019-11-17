@@ -35,6 +35,7 @@ require 'time'
 @owner = @repository["owner"]["login"]
 @repo = @repository["name"]
 @GITHUB_SHA = ENV["GITHUB_SHA"]
+p @event
 unless @event.pull_request.nil?
   @GITHUB_SHA = @event.pull_request.head.sha
 end
