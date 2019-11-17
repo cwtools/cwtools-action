@@ -68,16 +68,6 @@ def create_check
   return data["id"]
 end
 
-def update_checks(id, conclusion, outputs)
-  if outputs.nil?
-    update_check(id, conclusion, outputs)
-  else
-    outputs.each do |output|
-      update_check(id, conclusion, output)
-    end
-  end
-end
-
 def update_check(id, conclusion, output)
   body = {
     "name" => @check_name,
@@ -107,15 +97,25 @@ end
   "Hint" => 'notice'
 }
 
+def update_checks(id, conclusion, outputs)
+  if outputs.nil?
+    update_check(id, conclusion, outputs)
+  else
+    outputs.each do |output|
+      update_check(id, conclusion, output)
+    end
+  end
+end
+
 def run_cwtools
   annotations = []
-  outputs = []
   errors = nil
   puts "Running CWToolsCLI now..."
   Dir.chdir("/src/cwtools/CWToolsCLI") do
     `dotnet run -c Release -- --game hoi4 --directory "#{@GITHUB_WORKSPACE}" --cachefile "/src/cwtools/CWToolsCLI/hoi4.cwb" --rulespath "/src/cwtools-hoi4-config/Config" validate --reporttype json --scope mods --outputfile output.json all`
     errors = JSON.parse(`cat output.json`)
   end
+  puts "CWToolsCLI done..."
   conclusion = "success"
   count = 0
 
@@ -144,15 +144,14 @@ def run_cwtools
     end
   end
 
-  annotations_sliced = annotations.each_slice(50).to_a
+  outputs = []
 
-  annotations_sliced.each do |annotations_slice|
-    output = {
+  annotations.each_slice(50) do |annotations_slice|
+    outputs.push({
       "title": @check_name,
       "summary": "#{count} offense(s) found",
       "annotations" => annotations_slice
-    }
-    outputs.push(output)
+    })
   end
 
   return { "outputs" => outputs, "conclusion" => conclusion }
@@ -172,7 +171,7 @@ def run
 
     fail if conclusion == "failure"
   rescue
-    update_checks(id, "failure", nil)
+    update_check(id, "failure", nil)
     fail
   end
 end
