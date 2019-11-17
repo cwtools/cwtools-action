@@ -181,9 +181,10 @@ def run
     output.each do |o|
       update_check(id, nil, o)
     end
+    fail if conclusion == "failure"
     update_check(id, conclusion, nil)
   rescue
-    puts "There was an exception, failing"
+    puts "At least one check failed!"
     update_check(id, "failure", nil)
     fail
   end
