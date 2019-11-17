@@ -1,6 +1,9 @@
 # action.yml
 name: 'CWTools Action'
 description: 'Run CWTools on your HoI4 code'
+inputs: 
+  repo-token:
+    description: 'The GITHUB_TOKEN secret'
 runs:
   using: 'docker'
   image: 'Dockerfile'
