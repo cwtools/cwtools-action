@@ -6,7 +6,7 @@ cd /src/cwtools-hoi4-config
 git fetch
 git pull
 
-cd /opt/cwtools/
+cd /src/cwtools/CWToolsCLI
 mv $GITHUB_WORKSPACE/hoi4.cwb.7z .
 p7zip -d hoi4.cwb.7z
 
