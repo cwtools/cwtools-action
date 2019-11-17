@@ -90,22 +90,22 @@ def update_check(id, conclusion, output)
   end
 end
 
+def update_checks(id, conclusion, outputs)
+  if outputs.respond_to?('each')
+    outputs.each do |output|
+      update_check(id, conclusion, output)
+    end
+  else
+    update_check(id, conclusion, outputs)
+  end
+end
+
 @annotation_levels = {
   "Error" => 'failure',
   "Warning" => 'warning',
   "Information" => 'notice',
   "Hint" => 'notice'
 }
-
-def update_checks(id, conclusion, outputs)
-  if outputs.nil?
-    update_check(id, conclusion, outputs)
-  else
-    outputs.each do |output|
-      update_check(id, conclusion, output)
-    end
-  end
-end
 
 def run_cwtools
   annotations = []
@@ -144,17 +144,17 @@ def run_cwtools
     end
   end
 
-  outputs = []
+  output = []
 
   annotations.each_slice(50) do |annotations_slice|
-    outputs.push({
+    output.push({
       "title": @check_name,
       "summary": "#{count} offense(s) found",
       "annotations" => annotations_slice
     })
   end
 
-  return { "outputs" => outputs, "conclusion" => conclusion }
+  return { "output" => output, "conclusion" => conclusion }
 end
 
 def run
@@ -165,9 +165,9 @@ def run
   begin
     results = run_cwtools()
     conclusion = results["conclusion"]
-    outputs = results["outputs"]
-
-    update_checks(id, conclusion, outputs)
+    output = results["output"]
+    puts "Updating checks..."
+    update_checks(id, conclusion, output)
 
     fail if conclusion == "failure"
   rescue
