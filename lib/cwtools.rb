@@ -111,10 +111,8 @@ def run_cwtools
   annotations = []
   errors = nil
   puts "Running CWToolsCLI now..."
-  Dir.chdir("/src/cwtools/CWToolsCLI") do
-    `dotnet run -c Release -- --game hoi4 --directory "#{@GITHUB_WORKSPACE}" --cachefile "/src/cwtools/CWToolsCLI/hoi4.cwb" --rulespath "/src/cwtools-hoi4-config/Config" validate --reporttype json --scope mods --outputfile output.json all`
-    errors = JSON.parse(`cat output.json`)
-  end
+  `cwtools --game hoi4 --directory "#{@GITHUB_WORKSPACE}" --cachefile "/hoi4.cwb" --rulespath "/src/cwtools-hoi4-config/Config" validate --reporttype json --scope mods --outputfile output.json all`
+  errors = JSON.parse(`cat output.json`)
   puts "Done running CWToolsCLI..."
   conclusion = "success"
   count = 0
