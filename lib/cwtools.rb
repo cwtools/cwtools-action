@@ -68,30 +68,37 @@ def create_check
   return data["id"]
 end
 
-def update_check(id, conclusion, outputs)
-  outputs.each do |output|
-    body = {
-      "name" => @check_name,
-      "head_sha" => @GITHUB_SHA,
-      "status" => 'completed',
-      "completed_at" => Time.now.iso8601,
-      "conclusion" => conclusion,
-      "output" => output
-    }
-
-    http = Net::HTTP.new('api.github.com', 443)
-    http.use_ssl = true
-    path = "/repos/#{@owner}/#{@repo}/check-runs/#{id}"
-
-    resp = http.patch(path, body.to_json, @headers)
-
-    if resp.code.to_i >= 300
-      puts JSON.pretty_generate(resp.body)
-      raise resp.message
+def update_checks(id, conclusion, outputs)
+  if outputs.nil?
+    update_check(id, conclusion, outputs)
+  else
+    outputs.each do |output|
+      update_check(id, conclusion, output)
     end
   end
 end
 
+def update_check(id, conclusion, output)
+  body = {
+    "name" => @check_name,
+    "head_sha" => @GITHUB_SHA,
+    "status" => 'completed',
+    "completed_at" => Time.now.iso8601,
+    "conclusion" => conclusion,
+    "output" => output
+  }
+
+  http = Net::HTTP.new('api.github.com', 443)
+  http.use_ssl = true
+  path = "/repos/#{@owner}/#{@repo}/check-runs/#{id}"
+
+  resp = http.patch(path, body.to_json, @headers)
+
+  if resp.code.to_i >= 300
+    puts JSON.pretty_generate(resp.body)
+    raise resp.message
+  end
+end
 
 @annotation_levels = {
   "Error" => 'failure',
@@ -161,11 +168,11 @@ def run
     conclusion = results["conclusion"]
     outputs = results["outputs"]
 
-    update_check(id, conclusion, outputs)
+    update_checks(id, conclusion, outputs)
 
     fail if conclusion == "failure"
   rescue
-    update_check(id, "failure", nil)
+    update_checks(id, "failure", nil)
     fail
   end
 end
