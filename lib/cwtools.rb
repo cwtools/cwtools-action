@@ -26,7 +26,6 @@ require 'net/http'
 require 'json'
 require 'time'
 
-@GITHUB_SHA = ENV["GITHUB_SHA"]
 @GITHUB_EVENT_PATH = ENV["GITHUB_EVENT_PATH"]
 @GITHUB_TOKEN = ENV["GITHUB_TOKEN"]
 @GITHUB_WORKSPACE = ENV["GITHUB_WORKSPACE"]
@@ -35,6 +34,10 @@ require 'time'
 @repository = @event["repository"]
 @owner = @repository["owner"]["login"]
 @repo = @repository["name"]
+@GITHUB_SHA = ENV["GITHUB_SHA"]
+unless @event.pull_request.nil?
+  @GITHUB_SHA = @event.pull_request.head.sha
+end
 
 @check_name = "CWTools"
 
