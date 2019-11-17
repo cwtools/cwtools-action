@@ -69,7 +69,7 @@ def create_check
 end
 
 def update_check(id, conclusion, output)
-  if conclusion?nil
+  if conclusion.nil?
     body = {
       "name" => @check_name,
       "head_sha" => @GITHUB_SHA,
