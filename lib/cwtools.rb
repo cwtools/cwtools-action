@@ -69,15 +69,21 @@ def create_check
 end
 
 def update_check(id, conclusion, output)
-  body = {
-    "name" => @check_name,
-    "head_sha" => @GITHUB_SHA,
-    "status" => 'completed',
-    "completed_at" => Time.now.iso8601,
-    "conclusion" => conclusion,
-    "output" => output
-  }
-
+  if conclusion?nil
+    body = {
+      "name" => @check_name,
+      "head_sha" => @GITHUB_SHA,
+      "output" => output
+    }
+  else
+    body = {
+      "name" => @check_name,
+      "head_sha" => @GITHUB_SHA,
+      "status" => 'completed',
+      "completed_at" => Time.now.iso8601,
+      "conclusion" => conclusion
+    }
+  end
   http = Net::HTTP.new('api.github.com', 443)
   http.use_ssl = true
   path = "/repos/#{@owner}/#{@repo}/check-runs/#{id}"
@@ -126,13 +132,27 @@ def run_cwtools
         conclusion = "failure"
       end
 
-      annotations.push({
-                         "path" => path,
-                         "start_line" => location["startLine"],
-                         "end_line" => location["endLine"],
-                         "annotation_level": annotation_level,
-                         "message" => message
-                       })
+      if location["startLine"] == location["endLine"]
+        annotations.push({
+          "path" => path,
+          "title" => @check_name,
+          "start_line" => location["startLine"],
+          "end_line" => location["endLine"],
+          "start_column" => location["startColumn"],
+          "end_column" => location["endColumn"],
+          "annotation_level": annotation_level,
+          "message" => message
+        })
+      else
+        annotations.push({
+          "path" => path,
+          "title" => @check_name,
+          "start_line" => location["startLine"],
+          "end_line" => location["endLine"],
+          "annotation_level": annotation_level,
+          "message" => message
+        })
+      end
     end
   end
 
@@ -159,12 +179,11 @@ def run
     output = results["output"]
     puts "Updating checks..."
     output.each do |o|
-      update_check(id, conclusion, o)
+      update_check(id, nil, o)
     end
-
-    fail if conclusion == "failure"
+    update_check(id, conclusion, nil)
   rescue
-    puts "At least one check failed!"
+    puts "There was an exception, failing"
     update_check(id, "failure", nil)
     fail
   end
