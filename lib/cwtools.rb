@@ -90,15 +90,6 @@ def update_check(id, conclusion, output)
   end
 end
 
-def update_checks(id, conclusion, outputs)
-  if outputs.respond_to?('each')
-    outputs.each do |output|
-      update_check(id, conclusion, output)
-    end
-  else
-    update_check(id, conclusion, outputs)
-  end
-end
 
 @annotation_levels = {
   "Error" => 'failure',
@@ -115,7 +106,7 @@ def run_cwtools
     `dotnet run -c Release -- --game hoi4 --directory "#{@GITHUB_WORKSPACE}" --cachefile "/src/cwtools/CWToolsCLI/hoi4.cwb" --rulespath "/src/cwtools-hoi4-config/Config" validate --reporttype json --scope mods --outputfile output.json all`
     errors = JSON.parse(`cat output.json`)
   end
-  puts "CWToolsCLI done..."
+  puts "Done running CWToolsCLI..."
   conclusion = "success"
   count = 0
 
@@ -145,12 +136,11 @@ def run_cwtools
   end
 
   output = []
-
-  annotations.each_slice(50) do |annotations_slice|
+  annotations.each_slice(50).to_a.each do |annotation|
     output.push({
       "title": @check_name,
       "summary": "#{count} offense(s) found",
-      "annotations" => annotations_slice
+      "annotations" => annotation
     })
   end
 
@@ -167,7 +157,9 @@ def run
     conclusion = results["conclusion"]
     output = results["output"]
     puts "Updating checks..."
-    update_checks(id, conclusion, output)
+    output.each do |o|
+      update_check(id, conclusion, o)
+    end
 
     fail if conclusion == "failure"
   rescue
