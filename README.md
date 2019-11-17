@@ -2,9 +2,9 @@
 
 Example workflow yml:
 ```yml
-name: CI
+name: CWTools CI
 
-on: [push]
+on: [pull_request]
 
 jobs:
   cwtools_job:
@@ -16,4 +16,7 @@ jobs:
     - uses: Yard1/CWTools-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 ```
+Using (tboby/cwtools)[https://github.com/tboby/cwtools]
+Based on (gimenete/rubocop-action)[https://github.com/gimenete/rubocop-action] by Alberto Gimeno
