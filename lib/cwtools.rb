@@ -60,7 +60,7 @@ def create_check
   resp = http.post(path, body.to_json, @headers)
 
   if resp.code.to_i >= 300
-    p resp.errors
+    puts JSON.pretty_generate(resp.body)
     raise resp.message
   end
 
@@ -85,7 +85,7 @@ def update_check(id, conclusion, output)
   resp = http.patch(path, body.to_json, @headers)
 
   if resp.code.to_i >= 300
-    p resp.errors
+    puts JSON.pretty_generate(resp.body)
     raise resp.message
   end
 end
