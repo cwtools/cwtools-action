@@ -18,5 +18,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 ```
-Using (tboby/cwtools)[https://github.com/tboby/cwtools]
-Based on (gimenete/rubocop-action)[https://github.com/gimenete/rubocop-action] by Alberto Gimeno
+Using [tboby/cwtools](https://github.com/tboby/cwtools).
+
+Based on [gimenete/rubocop-action](https://github.com/gimenete/rubocop-action) by Alberto Gimeno.
