@@ -68,25 +68,27 @@ def create_check
   return data["id"]
 end
 
-def update_check(id, conclusion, output)
-  body = {
-    "name" => @check_name,
-    "head_sha" => @GITHUB_SHA,
-    "status" => 'completed',
-    "completed_at" => Time.now.iso8601,
-    "conclusion" => conclusion,
-    "output" => output
-  }
+def update_check(id, conclusion, outputs)
+  outputs.each do |output|
+    body = {
+      "name" => @check_name,
+      "head_sha" => @GITHUB_SHA,
+      "status" => 'completed',
+      "completed_at" => Time.now.iso8601,
+      "conclusion" => conclusion,
+      "output" => output
+    }
 
-  http = Net::HTTP.new('api.github.com', 443)
-  http.use_ssl = true
-  path = "/repos/#{@owner}/#{@repo}/check-runs/#{id}"
+    http = Net::HTTP.new('api.github.com', 443)
+    http.use_ssl = true
+    path = "/repos/#{@owner}/#{@repo}/check-runs/#{id}"
 
-  resp = http.patch(path, body.to_json, @headers)
+    resp = http.patch(path, body.to_json, @headers)
 
-  if resp.code.to_i >= 300
-    puts JSON.pretty_generate(resp.body)
-    raise resp.message
+    if resp.code.to_i >= 300
+      puts JSON.pretty_generate(resp.body)
+      raise resp.message
+    end
   end
 end
 
@@ -100,7 +102,9 @@ end
 
 def run_cwtools
   annotations = []
+  outputs = []
   errors = nil
+  puts "Running CWToolsCLI now..."
   Dir.chdir("/src/cwtools/CWToolsCLI") do
     `dotnet run -c Release -- --game hoi4 --directory "#{@GITHUB_WORKSPACE}" --cachefile "/src/cwtools/CWToolsCLI/hoi4.cwb" --rulespath "/src/cwtools-hoi4-config/Config" validate --reporttype json --scope mods --outputfile output.json all`
     errors = JSON.parse(`cat output.json`)
@@ -133,13 +137,18 @@ def run_cwtools
     end
   end
 
-  output = {
-    "title": @check_name,
-    "summary": "#{count} offense(s) found",
-    "annotations" => annotations
-  }
+  annotations_sliced = annotations.each_slice(50).to_a
 
-  return { "output" => output, "conclusion" => conclusion }
+  annotations_sliced.each do |annotations_slice|
+    output = {
+      "title": @check_name,
+      "summary": "#{count} offense(s) found",
+      "annotations" => annotations_slice
+    }
+    outputs.push(output)
+  end
+
+  return { "outputs" => outputs, "conclusion" => conclusion }
 end
 
 def run
@@ -150,9 +159,9 @@ def run
   begin
     results = run_cwtools()
     conclusion = results["conclusion"]
-    output = results["output"]
+    outputs = results["outputs"]
 
-    update_check(id, conclusion, output)
+    update_check(id, conclusion, outputs)
 
     fail if conclusion == "failure"
   rescue
