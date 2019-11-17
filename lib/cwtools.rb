@@ -112,6 +112,7 @@ def run_cwtools
 
   errors["files"].each do |file|
     path = file["file"]
+    path = path.sub! '/github/workspace/', ''
     offenses = file["errors"]
 
     offenses.each do |offense|
@@ -163,6 +164,7 @@ def run
 
     fail if conclusion == "failure"
   rescue
+    puts "At least one check failed!"
     update_check(id, "failure", nil)
     fail
   end
