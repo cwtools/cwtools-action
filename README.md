@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
     - uses: cwtools/CWTools-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
