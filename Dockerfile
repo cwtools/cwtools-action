@@ -9,17 +9,12 @@ LABEL maintainer="Antoni Baum <antoni.baum@protonmail.com>"
 
 COPY lib /action/lib
 
-# Install Ruby.
-RUN \
-  apt-get update && \
-  apt-get install -y ruby
-
 RUN apt-get update && \
   apt-get -y install \
-  bash git less wget vim
+  ruby bash git less wget vim p7zip
 RUN mkdir -p /src
 
-RUN git clone https://github.com/tboby/cwtools.git /src/cwtools
+RUN git clone --depth=1 --single-branch --branch CLI https://github.com/tboby/cwtools.git /src/cwtools
 WORKDIR /src/cwtools/CWToolsCLI
 RUN dotnet tool restore
 RUN dotnet paket restore
@@ -31,8 +26,6 @@ RUN cp -r /src/cwtools/CWToolsCLI/bin/release/netcoreapp3.0/linux-x64/ /opt/cwto
 RUN ln -s /opt/cwtools/CWToolsCLI /opt/cwtools/cwtools
 ENV PATH=/opt/cwtools:"$PATH"
 
-RUN git clone https://github.com/tboby/cwtools-hoi4-config.git /src/cwtools-hoi4-config
-
-ENV RULES_PATH=/src/cwtools-hoi4-config/Config
+RUN git clone --depth=1 https://github.com/tboby/cwtools-hoi4-config.git /src/cwtools-hoi4-config
 
 ENTRYPOINT ["/action/lib/entrypoint.sh"]

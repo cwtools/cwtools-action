@@ -30,7 +30,6 @@ require 'time'
 @GITHUB_EVENT_PATH = ENV["GITHUB_EVENT_PATH"]
 @GITHUB_TOKEN = ENV["GITHUB_TOKEN"]
 @GITHUB_WORKSPACE = ENV["GITHUB_WORKSPACE"]
-@RULES_PATH = ENV["RULES_PATH"]
 
 @event = JSON.parse(File.read(ENV["GITHUB_EVENT_PATH"]))
 @repository = @event["repository"]
@@ -100,7 +99,7 @@ end
 def run_cwtools
   annotations = []
   errors = nil
-  `dotnet run -c Release -- --game hoi4 --directory "#{@GITHUB_WORKSPACE}" --cachefile "./hoi4.cwb" --rulespath "#{@RULES_PATH}" validate --reporttype json --scope mods --outputfile output.json all`
+  `dotnet run -c Release -- --game hoi4 --directory "#{@GITHUB_WORKSPACE}" --cachefile "/opt/cwtools/hoi4.cwb" --rulespath "/src/cwtools-hoi4-config/Config" validate --reporttype json --scope mods --outputfile output.json all`
   errors = JSON.parse(`cat output.json`)
   conclusion = "success"
   count = 0
