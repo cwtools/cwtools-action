@@ -7,9 +7,9 @@ inputs:
     required: false
     default: '1'
   suppressedOffenceCategories:
-    description: 'What CWTools offence categories to suppress, in JSON format: {"failure":[], "warnings:[], "notice":[]}'
+    description: 'What CWTools offence categories to suppress, in JSON format: {"failure":[], "warnings":[], "notice":[]}'
     required: false
-    default: '{"failure":[], "warnings:[], "notice":[]}'
+    default: '{"failure":[], "warnings":[], "notice":[]}'
 runs:
   using: 'docker'
   image: 'Dockerfile'
