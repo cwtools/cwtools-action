@@ -48,6 +48,8 @@ else
   @CHANGED_ONLY = true
 end
 
+@SUPPRESSED_OFFENCE_CATEGORIES = JSON.parse(File.read(ENV["INPUT_SUPPRESSEDOFFENCECATEGORIES"]))
+
 @changed_files = []
 @check_name = "CWTools"
 
@@ -168,6 +170,10 @@ def run_cwtools
         annotation_level = @annotation_levels[severity]
         if annotation_level != "notice" && annotation_level != "warning" && annotation_level != "failure"
           annotation_level = "notice"
+        end
+
+        if @SUPPRESSED_OFFENCE_CATEGORIES[annotation_level].include?(offense["category"])
+          next
         end
 
         if annotation_level == "failure"
