@@ -64,11 +64,18 @@ def get_changed_files
     if @is_pull_request
       diff_output = `git diff --name-status origin/#{@is_pull_request[0]} origin/#{@is_pull_request[1]}`
     else
-      diff_output = `git diff #{@GITHUB_SHA}^!`
+      diff_output = `git diff-tree --no-commit-id --name-only -r #{@GITHUB_SHA}`
     end
   end
-  diff_output = diff_output.split("\n")
-  diff_output.map! { |item| parse_diff_line(item)}
+  unless diff_output.nil?
+    p diff_output
+    diff_output = diff_output.split("\n")
+    if @is_pull_request
+      diff_output.map! { |item| parse_diff_line(item)}
+    end
+  else
+    diff_output = []
+  end
   diff_output = diff_output.to_set
   @changed_files = diff_output
 end
