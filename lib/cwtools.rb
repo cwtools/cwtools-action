@@ -60,7 +60,7 @@ end
 def get_changed_files
   Dir.chdir(@GITHUB_WORKSPACE) do
     if @is_pull_request
-      diff_output = `git diff --name-status #{@is_pull_request[0]} #{@is_pull_request[1]}`
+      diff_output = `git diff --name-status origin/#{@is_pull_request[0]} origin/#{@is_pull_request[1]}`
     else
       diff_output = `git diff #{@GITHUB_SHA}^!`
     end
