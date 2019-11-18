@@ -214,7 +214,7 @@ def run_cwtools
 end
 
 def run
-  puts "CWTOOLS CHECK"
+  puts "ANNOTATE"
   unless defined?(@GITHUB_TOKEN)
     raise "GITHUB_TOKEN environment variable has not been defined"
   end
