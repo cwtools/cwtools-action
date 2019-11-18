@@ -133,10 +133,10 @@ end
 
 
 @annotation_levels = {
-  "Error" => 'failure',
-  "Warning" => 'warning',
-  "Information" => 'notice',
-  "Hint" => 'notice'
+  "error" => 'failure',
+  "warning" => 'warning',
+  "information" => 'notice',
+  "hint" => 'notice'
 }
 
 def run_cwtools
@@ -154,13 +154,13 @@ def run_cwtools
 
   errors["files"].each do |file|
     path = file["file"]
-    path = path.sub! '/github/workspace/', ''
+    path = path.sub! @GITHUB_WORKSPACE+"/", ''
     path = path.strip
     offenses = file["errors"]
     if !@CHANGED_ONLY || @changed_files.include?(path)
       file_count = file_count + 1
       offenses.each do |offense|
-        severity = offense["severity"]
+        severity = offense["severity"].downcase
         message = offense["category"] + ": " + offense["message"]
         location = offense["position"]
         annotation_level = @annotation_levels[severity]
