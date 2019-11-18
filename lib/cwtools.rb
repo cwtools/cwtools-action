@@ -65,6 +65,7 @@ def get_changed_files
       diff_output = `git diff #{@GITHUB_SHA}^!`
     end
   end
+  p diff_output
   diff_output = diff_output.split("\n").reject(&:blank?)
   diff_output.map! { |item| parse_diff_line(item)}
   @changed_files = diff_output
