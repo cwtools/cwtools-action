@@ -67,13 +67,13 @@ def get_changed_files
     end
   end
   p diff_output
-  diff_output = diff_output.split("\n").reject(&:blank?)
+  diff_output = diff_output.split("\n")
   diff_output.map! { |item| parse_diff_line(item)}
   @changed_files = diff_output
 end
 
 def parse_diff_line(line)
-  return line[1..-1].strip
+  return line[2..-1].strip
 end
 
 def create_check
