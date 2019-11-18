@@ -204,7 +204,7 @@ def run_cwtools
   annotations.each_slice(50).to_a.each do |annotation|
     output.push({
       "title": @check_name,
-      "summary": "#{total_count} offense(s) found:\n#{count["failure"]} failure(s)\n#{count["warning"]} warning(s)\n#{count["notice"]} notice(s)",
+      "summary": "**#{total_count}** offense(s) found:\n* #{count["failure"]} failure(s)\n* #{count["warning"]} warning(s)\n* #{count["notice"]} notice(s)",
       "annotations" => annotation
     })
   end
