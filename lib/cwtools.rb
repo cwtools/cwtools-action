@@ -25,6 +25,7 @@
 require 'net/http'
 require 'json'
 require 'time'
+require 'set'
 
 @GITHUB_EVENT_PATH = ENV["GITHUB_EVENT_PATH"]
 @GITHUB_TOKEN = ENV["GITHUB_TOKEN"]
@@ -69,6 +70,7 @@ def get_changed_files
   p diff_output
   diff_output = diff_output.split("\n")
   diff_output.map! { |item| parse_diff_line(item)}
+  diff_output = diff_output.to_set
   @changed_files = diff_output
 end
 
