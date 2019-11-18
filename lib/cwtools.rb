@@ -242,9 +242,8 @@ def run
     fail if conclusion == "failure"
     update_check(id, conclusion, nil)
   rescue
-    puts "At least one check failed!"
     update_check(id, "failure", nil)
-    fail
+    fail("At least one check failed! Exiting with a non-zero error code...")
   end
 end
 
