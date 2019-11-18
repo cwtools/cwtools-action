@@ -148,6 +148,7 @@ def run_cwtools
   puts "Done running CWToolsCLI..."
   conclusion = "success"
   count = { "failure" => 0, "warning" => 0, "notice" => 0 }
+  file_count = 0
 
   errors["files"].each do |file|
     path = file["file"]
@@ -155,6 +156,7 @@ def run_cwtools
     path = path.strip
     offenses = file["errors"]
     if !@CHANGED_ONLY || @changed_files.include?(path)
+      file_count = file_count + 1
       offenses.each do |offense|
         severity = offense["severity"]
         message = offense["category"] + ": " + offense["message"]
@@ -204,7 +206,7 @@ def run_cwtools
   annotations.each_slice(50).to_a.each do |annotation|
     output.push({
       "title": @check_name,
-      "summary": "**#{total_count}** offense(s) found:\n* #{count["failure"]} failure(s)\n* #{count["warning"]} warning(s)\n* #{count["notice"]} notice(s)",
+      "summary": "**#{total_count}** offense(s) found in #{file_count} files:\n* #{count["failure"]} failure(s)\n* #{count["warning"]} warning(s)\n* #{count["notice"]} notice(s)",
       "annotations" => annotation
     })
   end
