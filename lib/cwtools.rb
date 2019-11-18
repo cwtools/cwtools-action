@@ -64,28 +64,20 @@ def get_changed_files
   diff_output = nil
   Dir.chdir(@GITHUB_WORKSPACE) do
     if @is_pull_request
-      diff_output = `git diff --name-status origin/#{@is_pull_request[0]} origin/#{@is_pull_request[1]}`
+      diff_output = `git log --name-only --pretty="" origin/#{@is_pull_request[0]}..origin/#{@is_pull_request[1]}`
     else
       diff_output = `git diff-tree --no-commit-id --name-only -r #{@GITHUB_SHA}`
     end
   end
   unless diff_output.nil?
     diff_output = diff_output.split("\n")
-    if @is_pull_request
-      diff_output.map! { |item| parse_diff_line(item)}
-    else
-      diff_output.collect(&:strip)
-    end
+    diff_output.collect(&:strip)
   else
     diff_output = []
   end
   diff_output = diff_output.to_set
   p diff_output
   @changed_files = diff_output
-end
-
-def parse_diff_line(line)
-  return line[2..-1].strip
 end
 
 def create_check
