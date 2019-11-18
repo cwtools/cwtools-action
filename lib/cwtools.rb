@@ -149,7 +149,6 @@ def run_cwtools
   annotations = []
   errors = nil
   puts "Running CWToolsCLI now..."
-  puts `pwd`
   `cwtools --game hoi4 --directory "#{@GITHUB_WORKSPACE}" --cachefile "/hoi4.cwb" --rulespath "/src/cwtools-hoi4-config/Config" validate --reporttype json --scope mods --outputfile output.json all`
   errors = JSON.parse(`cat output.json`)
   puts "Done running CWToolsCLI..."
