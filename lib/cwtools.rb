@@ -151,23 +151,22 @@ def run_cwtools
     path = path.sub! '/github/workspace/', ''
     path = path.strip
     offenses = file["errors"]
+    if !@CHANGED_ONLY || @changed_files.include?(path)
+      offenses.each do |offense|
+        severity = offense["severity"]
+        message = offense["category"] + ": " + offense["message"]
+        location = offense["position"]
+        annotation_level = @annotation_levels[severity]
+        if annotation_level != "notice" && annotation_level != "warning" && annotation_level != "failure"
+          annotation_level = "notice"
+        end
 
-    offenses.each do |offense|
-      severity = offense["severity"]
-      message = offense["category"] + ": " + offense["message"]
-      location = offense["position"]
-      annotation_level = @annotation_levels[severity]
-      if annotation_level != "notice" && annotation_level != "warning" && annotation_level != "failure"
-        annotation_level = "notice"
-      end
-
-      if annotation_level == "failure"
-        conclusion = "failure"
-      elsif conclusion != "failure" && annotation_level == "warning"
-        conclusion = "neutral"
-      end
-      if !@CHANGED_ONLY || @changed_files.include?(path)
-        count = count + 1
+        if annotation_level == "failure"
+          conclusion = "failure"
+        elsif conclusion != "failure" && annotation_level == "warning"
+          conclusion = "neutral"
+        end
+          count = count + 1
         if location["startLine"] == location["endLine"]
           annotations.push({
             "path" => path,
