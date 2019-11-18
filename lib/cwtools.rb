@@ -35,10 +35,19 @@ require 'time'
 @owner = @repository["owner"]["login"]
 @repo = @repository["name"]
 @GITHUB_SHA = ENV["GITHUB_SHA"]
+@is_pull_request = false
 unless @event["pull_request"].nil?
   @GITHUB_SHA = @event["pull_request"]["head"]["sha"]
+  @is_pull_request = [@event["pull_request"]["base"]["ref"], @event["pull_request"]["head"]["ref"]]
+end
+@CHANGED_ONLY = ENV["INPUT_CHANGEDFILESONLY"]
+if @CHANGED_ONLY == '0' || @CHANGED_ONLY.downcase == 'false'
+  @CHANGED_ONLY = false
+else
+  @CHANGED_ONLY = true
 end
 
+@changed_files = []
 @check_name = "CWTools"
 
 @headers = {
@@ -47,6 +56,23 @@ end
   "Authorization": "Bearer #{@GITHUB_TOKEN}",
   "User-Agent": 'cwtools-action'
 }
+
+def get_changed_files
+  Dir.chdir(@GITHUB_WORKSPACE) do
+    if @is_pull_request
+      diff_output = `git diff --name-status #{@is_pull_request[0]} #{@is_pull_request[1]}`
+    else
+      diff_output = `git diff #{@GITHUB_SHA}^!`
+    end
+  end
+  diff_output = diff_output.split("\n").reject(&:blank?)
+  diff_output.map! { |item| parse_diff_line(item)}
+  @changed_files = diff_output
+end
+
+def parse_diff_line(line)
+  return line[1..-1].strip
+end
 
 def create_check
   body = {
@@ -120,6 +146,7 @@ def run_cwtools
   errors["files"].each do |file|
     path = file["file"]
     path = path.sub! '/github/workspace/', ''
+    path = path.strip
     offenses = file["errors"]
 
     offenses.each do |offense|
@@ -130,34 +157,35 @@ def run_cwtools
       if annotation_level != "notice" && annotation_level != "warning" && annotation_level != "failure"
         annotation_level = "notice"
       end
-      count = count + 1
 
       if annotation_level == "failure"
         conclusion = "failure"
       elsif conclusion != "failure" && annotation_level == "warning"
         conclusion = "neutral"
       end
-
-      if location["startLine"] == location["endLine"]
-        annotations.push({
-          "path" => path,
-          "title" => @check_name,
-          "start_line" => location["startLine"],
-          "end_line" => location["endLine"],
-          "start_column" => location["startColumn"],
-          "end_column" => location["endColumn"],
-          "annotation_level": annotation_level,
-          "message" => message
-        })
-      else
-        annotations.push({
-          "path" => path,
-          "title" => @check_name,
-          "start_line" => location["startLine"],
-          "end_line" => location["endLine"],
-          "annotation_level": annotation_level,
-          "message" => message
-        })
+      if !@CHANGED_ONLY || @changed_files.include? path
+        count = count + 1
+        if location["startLine"] == location["endLine"]
+          annotations.push({
+            "path" => path,
+            "title" => @check_name,
+            "start_line" => location["startLine"],
+            "end_line" => location["endLine"],
+            "start_column" => location["startColumn"],
+            "end_column" => location["endColumn"],
+            "annotation_level": annotation_level,
+            "message" => message
+          })
+        else
+          annotations.push({
+            "path" => path,
+            "title" => @check_name,
+            "start_line" => location["startLine"],
+            "end_line" => location["endLine"],
+            "annotation_level": annotation_level,
+            "message" => message
+          })
+        end
       end
     end
   end
@@ -180,6 +208,7 @@ def run
   end
   id = create_check()
   begin
+    get_changed_files()
     results = run_cwtools()
     conclusion = results["conclusion"]
     output = results["output"]

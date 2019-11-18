@@ -2,8 +2,10 @@
 name: 'CWTools Action'
 description: 'Run CWTools on your HoI4 code'
 inputs: 
-  repo-token:
-    description: 'The GITHUB_TOKEN secret'
+  changedFilesOnly:
+    description: 'Whether to only push offences in changed files (Default: True, set to 0 for False)'
+    required: false
+    default: '1'
 runs:
   using: 'docker'
   image: 'Dockerfile'
