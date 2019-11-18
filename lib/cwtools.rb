@@ -147,7 +147,7 @@ def run_cwtools
   errors = JSON.parse(`cat output.json`)
   puts "Done running CWToolsCLI..."
   conclusion = "success"
-  count = 0
+  count = { "failure" => 0, "warning" => 0, "notice" => 0 }
 
   errors["files"].each do |file|
     path = file["file"]
@@ -173,7 +173,7 @@ def run_cwtools
         elsif conclusion != "failure" && annotation_level == "warning"
           conclusion = "neutral"
         end
-          count = count + 1
+          count[annotation_level] = count[annotation_level] + 1
         if location["startLine"] == location["endLine"]
           annotations.push({
             "path" => path,
@@ -200,10 +200,11 @@ def run_cwtools
   end
 
   output = []
+  total_count = count["failure"]+count["warning"]+count["notice"]
   annotations.each_slice(50).to_a.each do |annotation|
     output.push({
       "title": @check_name,
-      "summary": "#{count} offense(s) found",
+      "summary": "#{total_count} offense(s) found:\n#{count["failure"]} failure(s)\n#{count["warning"]} warning(s)\n#{count["notice"]} notice(s)",
       "annotations" => annotation
     })
   end
