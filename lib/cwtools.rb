@@ -68,15 +68,17 @@ def get_changed_files
     end
   end
   unless diff_output.nil?
-    p diff_output
     diff_output = diff_output.split("\n")
     if @is_pull_request
       diff_output.map! { |item| parse_diff_line(item)}
+    else
+      diff_output.collect(&:strip)
     end
   else
     diff_output = []
   end
   diff_output = diff_output.to_set
+  p diff_output
   @changed_files = diff_output
 end
 
