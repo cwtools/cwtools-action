@@ -214,8 +214,19 @@ def run_cwtools
 end
 
 def run
+  puts "CWTOOLS CHECK"
   unless defined?(@GITHUB_TOKEN)
     raise "GITHUB_TOKEN environment variable has not been defined"
+  end
+  if @is_pull_request
+    puts "Is pull request..."
+  else
+    puts "Is commit..."
+  end
+  if @CHANGED_ONLY
+    puts "Annotating only changed files..."
+  else
+    puts "Annotating all files..."
   end
   id = create_check()
   begin
