@@ -163,7 +163,7 @@ def run_cwtools
       elsif conclusion != "failure" && annotation_level == "warning"
         conclusion = "neutral"
       end
-      if !@CHANGED_ONLY || @changed_files.include? path
+      if !@CHANGED_ONLY || @changed_files.include?(path)
         count = count + 1
         if location["startLine"] == location["endLine"]
           annotations.push({
