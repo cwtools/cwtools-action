@@ -19,6 +19,6 @@ p7zip -d hoi4.cwb.7z
 
 cwtools --game hoi4 --directory "$GITHUB_WORKSPACE" --cachefile "/hoi4.cwb" --rulespath "/src/cwtools-hoi4-config/Config" validate --reporttype json --scope mods --outputfile output.json all
 echo "$GITHUB_WORKSPACE/artifact"
-mkdir -p "$GITHUB_WORKSPACE/artifact"
-cp output.json "$GITHUB_WORKSPACE/artifact"
+mkdir -p -v "$GITHUB_WORKSPACE/artifact"
+cp -v output.json "$GITHUB_WORKSPACE/artifact"
 ruby /action/lib/cwtools.rb
