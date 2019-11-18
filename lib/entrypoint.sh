@@ -17,7 +17,7 @@ cd /
 mv $GITHUB_WORKSPACE/hoi4.cwb.7z .
 p7zip -d hoi4.cwb.7z
 
-cwtools --game hoi4 --directory "#{@GITHUB_WORKSPACE}" --cachefile "/hoi4.cwb" --rulespath "/src/cwtools-hoi4-config/Config" validate --reporttype json --scope mods --outputfile output.json all
+cwtools --game hoi4 --directory "$GITHUB_WORKSPACE" --cachefile "/hoi4.cwb" --rulespath "/src/cwtools-hoi4-config/Config" validate --reporttype json --scope mods --outputfile output.json all
 mkdir -p /artifact
 cp output.json artifact
 ruby /action/lib/cwtools.rb
