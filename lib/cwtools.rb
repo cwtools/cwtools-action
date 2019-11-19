@@ -148,7 +148,7 @@ def run_cwtools
   errors = nil
   puts "Running CWToolsCLI now..."
   Dir.chdir(@GITHUB_WORKSPACE) do
-    `cwtools --game hoi4 --directory "#{@GITHUB_WORKSPACE}" --cachefile "/hoi4.cwb" --rulespath "/src/cwtools-hoi4-config/Config" validate --reporttype json --scope mods --outputfile output.json all`
+    `cwtools --game #{@GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{@GAME}.cwb" --rulespath "/src/cwtools-#{@GAME}-config/Config" validate --reporttype json --scope mods --outputfile output.json all`
     errors = JSON.parse(`cat output.json`)
   end
   puts "Done running CWToolsCLI..."
