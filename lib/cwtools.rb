@@ -182,8 +182,8 @@ def run_cwtools
             "title" => @check_name,
             "start_line" => location["startLine"],
             "end_line" => location["endLine"],
-            "start_column" => location["startColumn"].to_i > 0 ? location["startColumn"] : location["startColumn"].to_i + 1,
-            "end_column" => location["endColumn"].to_i > 0 ? location["endColumn"] : location["endColumn"].to_i + 1,
+            "start_column" => location["startColumn"].to_i > 0 ? location["startColumn"] : 1,
+            "end_column" => location["endColumn"].to_i > 0 ? location["endColumn"] : 1,
             "annotation_level": annotation_level,
             "message" => message
           })
