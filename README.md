@@ -1,4 +1,5 @@
 # CWTools Action
+Run CWTools on your Clausewitz mod PDXScript code in parallel to your builds.
 
 ## Example workflow yml
 ```yml
