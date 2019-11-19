@@ -19,6 +19,21 @@ jobs:
 
 ```
 
+The full `output.json` log is saved to `$GITHUB_WORKSPACE`, and can be recovered with [actions/upload-artifact](https://github.com/actions/upload-artifact).
+```yml
+    - uses: cwtools/CWTools-action@master
+      with:
+        game: hoi4
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload artifact
+      if: always() # so even if the check fails, the log is uploaded
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: cwtools_output
+        path: output.json
+```
+
 ## Inputs
 ### game (required)
 What game to use. Allowed values: `hoi4`, `ck2`, `eu4`, `ir`, `stellaris`, `vic2`.
