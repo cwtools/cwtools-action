@@ -49,7 +49,7 @@ else
 end
 
 @SUPPRESSED_OFFENCE_CATEGORIES = JSON.parse(ENV["INPUT_SUPPRESSEDOFFENCECATEGORIES"])
-@GAME = ENV["IMPUT_GAME"]
+@GAME = ENV["INPUT_GAME"]
 
 @changed_files = []
 @check_name = "CWTools"
