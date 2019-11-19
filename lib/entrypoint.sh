@@ -27,4 +27,9 @@ cd /
 mv $GITHUB_WORKSPACE/$INPUT_GAME.cwb.7z .
 p7zip -d $INPUT_GAME.cwb.7z
 
+if [ ! -f "$INPUT_GAME.cwb" ]; then
+    echo "$INPUT_GAME.cwb does not exist"
+    exit 1
+fi
+
 ruby /action/lib/cwtools.rb
