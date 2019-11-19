@@ -176,7 +176,7 @@ def run_cwtools
           conclusion = "neutral"
         end
           count[annotation_level] = count[annotation_level] + 1
-        if location["startLine"] == location["endLine"]
+        if location["startLine"] == location["endLine"] && location["startColumn"].to_i <= location["endColumn"].to_i
           annotations.push({
             "path" => path,
             "title" => @check_name,
