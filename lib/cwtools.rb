@@ -50,9 +50,6 @@ end
 
 @SUPPRESSED_OFFENCE_CATEGORIES = JSON.parse(ENV["INPUT_SUPPRESSEDOFFENCECATEGORIES"])
 @GAME = ENV["IMPUT_GAME"]
-if @GAME == "stellaris"
-  @GAME = "stl"
-end
 
 @changed_files = []
 @check_name = "CWTools"
@@ -148,7 +145,7 @@ def run_cwtools
   errors = nil
   puts "Running CWToolsCLI now..."
   Dir.chdir(@GITHUB_WORKSPACE) do
-    `cwtools --game #{@GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{@GAME}.cwb" --rulespath "/src/cwtools-#{@GAME}-config/Config" validate --reporttype json --scope mods --outputfile output.json all`
+    `cwtools --game #{@GAME == "stellaris" ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{@GAME}.cwb" --rulespath "/src/cwtools-#{@GAME}-config/Config" validate --reporttype json --scope mods --outputfile output.json all`
     errors = JSON.parse(`cat output.json`)
   end
   puts "Done running CWToolsCLI..."
