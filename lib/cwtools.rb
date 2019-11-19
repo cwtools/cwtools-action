@@ -143,10 +143,9 @@ end
 def run_cwtools
   annotations = []
   errors = nil
-  game = (@GAME == "stellaris") ? "stl" : @GAME
   puts "Running CWToolsCLI now..."
   Dir.chdir(@GITHUB_WORKSPACE) do
-    `cwtools --game #{game} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{@GAME}.cwb" --rulespath "/src/cwtools-#{@GAME}-config" validate --reporttype json --scope mods --outputfile output.json all`
+    `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{@GAME}.cwb" --rulespath "/src/cwtools-#{@GAME}-config" validate --reporttype json --scope mods --outputfile output.json all`
     errors = JSON.parse(`cat output.json`)
   end
   puts "Done running CWToolsCLI..."
