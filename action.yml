@@ -2,6 +2,9 @@
 name: 'CWTools Action'
 description: 'Run CWTools on your HoI4 code'
 inputs: 
+  game:
+    description: 'What game to use. Supported values: hoi4, ck2, eu4, ir, stellaris, vic2.'
+    required: true
   changedFilesOnly:
     description: 'Whether to only push offences in changed files (Default: True, set to 0 for False)'
     required: false
