@@ -23,9 +23,9 @@ cd /src/cwtools-$INPUT_GAME-config
 git fetch
 git pull
 
-CWB_GAME = $INPUT_GAME 
-if [ $INPUT_GAME = "stellaris" ]; then
-  CWB_GAME = "stl"
+CWB_GAME=$INPUT_GAME 
+if [ $INPUT_GAME == "stellaris" ]; then
+  CWB_GAME="stl"
 fi
 
 cd /
