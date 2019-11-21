@@ -145,8 +145,8 @@ def run_cwtools
   errors = nil
   puts "Running CWToolsCLI now..."
   Dir.chdir(@GITHUB_WORKSPACE) do
-    puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}\" --cachefile \"/#{@GAME}.cwb\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --reporttype json --scope mods --outputfile output.json all"
-    `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{@GAME}.cwb" --rulespath "/src/cwtools-#{@GAME}-config" validate --reporttype json --scope mods --outputfile output.json all`
+    puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --reporttype json --scope mods --outputfile output.json all"
+    `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb" --rulespath "/src/cwtools-#{@GAME}-config" validate --reporttype json --scope mods --outputfile output.json all`
     errors = JSON.parse(`cat output.json`)
   end
   puts "Done running CWToolsCLI..."

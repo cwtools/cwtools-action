@@ -23,12 +23,18 @@ cd /src/cwtools-$INPUT_GAME-config
 git fetch
 git pull
 
-cd /
-mv $GITHUB_WORKSPACE/$INPUT_GAME.cwb.7z .
-p7zip -d $INPUT_GAME.cwb.7z
+CWB_GAME = $INPUT_GAME 
+if [ $INPUT_GAME = "stellaris" ]; then
+  CWB_GAME = "stl"
+fi
 
-if [ ! -f "$INPUT_GAME.cwb" ]; then
-    echo "$INPUT_GAME.cwb does not exist"
+cd /
+mv $GITHUB_WORKSPACE/$CWB_GAME.cwb.7z .
+p7zip -d $CWB_GAME.cwb.7z
+
+
+if [ ! -f "$CWB_GAME.cwb" ]; then
+    echo "$CWB_GAME.cwb does not exist"
     exit 1
 fi
 
