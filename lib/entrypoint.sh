@@ -17,11 +17,11 @@ export PATH="$PATH:/github/home/.dotnet/tools"
 
 cd /
 mkdir -p /src
-git clone --depth=1 https://github.com/tboby/cwtools-$INPUT_GAME-config.git /src/cwtools-$INPUT_GAME-config
+git clone $INPUT_RULES /src/cwtools-$INPUT_GAME-config
 
 cd /src/cwtools-$INPUT_GAME-config
 git fetch
-git pull
+git checkout $INPUT_RULESREF
 
 CWB_GAME=$INPUT_GAME 
 if [ "$INPUT_GAME" = "stellaris" ]; then
