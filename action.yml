@@ -12,7 +12,7 @@ inputs:
   rules:
     description: 'What rules repository to use (Default: https://github.com/cwtools/cwtools-$INPUT_GAME-config.git)'
     required: false
-    default: 'https://github.com/cwtools/cwtools-$INPUT_GAME-config.git'
+    default: 'https://github.com/cwtools/cwtools-${!INPUT_GAME}-config.git'
   rulesRef:
     description: 'What ref on rules repo to checkout (Default: master)'
     required: false
