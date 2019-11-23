@@ -74,7 +74,8 @@ def get_changed_files
     if @is_pull_request
       diff_output = `git log --name-only --pretty="" origin/#{@is_pull_request[0]}..origin/#{@is_pull_request[1]}`
     else
-      diff_output = `git diff-tree --no-commit-id --name-only -r #{@GITHUB_SHA}`
+      before_commit = @event["before"]
+      diff_output = `git diff --name-only #{before_commit} #{@GITHUB_SHA}`
     end
   end
   unless diff_output.nil?
