@@ -24,12 +24,12 @@ git fetch
 git pull
 
 CWB_GAME=$INPUT_GAME 
-if [ $INPUT_GAME == "stellaris" ]; then
+if [ "$INPUT_GAME" = "stellaris" ]; then
   CWB_GAME="stl"
 fi
 
 cd /
-if [ $INPUT_CACHE == '' ]; then
+if [ "$INPUT_CACHE" = "" ]; then
   echo "Using metadata cache from cwtools/cwtools-cache-files"
   git clone --depth=1  --single-branch --branch $INPUT_GAME https://github.com/cwtools/cwtools-cache-files.git cwtools-cache-files
   mv -v cwtools-cache-files/$CWB_GAME.cwv.bz2 .
