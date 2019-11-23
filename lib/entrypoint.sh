@@ -12,7 +12,7 @@ case $INPUT_GAME in
   *) echo "Wrong game, $INPUT_GAME is not valid" 1>&2 ; exit 1 # terminate and indicate error
 esac
 
-dotnet tool install --global CWTools.CLI
+dotnet tool install --global -v m CWTools.CLI
 export PATH="$PATH:/github/home/.dotnet/tools"
 
 cd /
@@ -30,15 +30,15 @@ fi
 
 cd /
 if [ "$INPUT_CACHE" = "" ]; then
-  echo "Using metadata cache from cwtools/cwtools-cache-files"
+  echo "Using metadata cache from 'cwtools/cwtools-cache-files'..."
   git clone --depth=1  --single-branch --branch $INPUT_GAME https://github.com/cwtools/cwtools-cache-files.git cwtools-cache-files
   mv -v cwtools-cache-files/$CWB_GAME.cwv.bz2 .
 else
-  echo "Using full game cache from $GITHUB_WORKSPACE/$INPUT_CACHE"
+  echo "Using full game cache from '$GITHUB_WORKSPACE/$INPUT_CACHE'..."
   mv -v $GITHUB_WORKSPACE/$INPUT_CACHE .
 
   if [ ! -f "$CWB_GAME.cwb.bz2" ]; then
-      echo "$CWB_GAME.cwb.bz2 does not exist"
+      echo "$CWB_GAME.cwb.bz2 does not exist!"
       exit 1
   fi
 fi
