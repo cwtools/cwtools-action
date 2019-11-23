@@ -45,7 +45,16 @@ What game to use. Allowed values: `hoi4`, `ck2`, `eu4`, `ir`, `stellaris`, `vic2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
-
+### cache (optional)
+Path to the full cache file (`cwb.bz2`) in $GITHUB_WORKSPACE (root of repository). Use an empty string to use metadata from cwtools/cwtools-cache-files (Default: use metadata)
+```yml
+    - uses: cwtools/CWTools-action@master
+      with:
+        game: hoi4
+        cache: "cache/hoi4.cwb.bz2"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
 ### changedFilesOnly (optional)
 By default will only annotate changed files, in order to annotate all files set `changedFilesOnly` input to `"0"`.
 ```yml

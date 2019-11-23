@@ -48,6 +48,13 @@ else
   @CHANGED_ONLY = true
 end
 
+@CACHE_FULL = ENV["INPUT_CACHE"]
+if @CACHE_FULL == ''
+  @CACHE_FULL = false
+else
+  @CACHE_FULL = true
+end
+
 @SUPPRESSED_OFFENCE_CATEGORIES = JSON.parse(ENV["INPUT_SUPPRESSEDOFFENCECATEGORIES"])
 @GAME = ENV["INPUT_GAME"]
 
@@ -145,8 +152,13 @@ def run_cwtools
   errors = nil
   puts "Running CWToolsCLI now..."
   Dir.chdir(@GITHUB_WORKSPACE) do
-    puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --reporttype json --scope mods --outputfile output.json all"
-    `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb" --rulespath "/src/cwtools-#{@GAME}-config" validate --reporttype json --scope mods --outputfile output.json all`
+    if !@CACHE_FULL
+      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json all"
+      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json all`  
+    else
+      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype full --reporttype json --scope mods --outputfile output.json all"
+      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype full --reporttype json --scope mods --outputfile output.json all`
+    end
     errors = JSON.parse(`cat output.json`)
   end
   puts "Done running CWToolsCLI..."

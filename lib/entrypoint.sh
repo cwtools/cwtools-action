@@ -29,13 +29,15 @@ if [ $INPUT_GAME == "stellaris" ]; then
 fi
 
 cd /
-mv $GITHUB_WORKSPACE/$CWB_GAME.cwb.7z .
-p7zip -d $CWB_GAME.cwb.7z
+if [ $INPUT_CACHE == '' ]; then
+  git clone --depth=1  --single-branch --branch $INPUT_GAME https://github.com/cwtools/cwtools-cache-files.git cwtools-cache-files
+  mv -v cwtools-cache-files/$CWB_GAME.cwv.bz2 .
+else
+  mv -v $GITHUB_WORKSPACE/$INPUT_CACHE .
 
-
-if [ ! -f "$CWB_GAME.cwb" ]; then
-    echo "$CWB_GAME.cwb does not exist"
-    exit 1
+  if [ ! -f "$CWB_GAME.cwb.bz2" ]; then
+      echo "$CWB_GAME.cwb.bz2 does not exist"
+      exit 1
+  fi
 fi
-
 ruby /action/lib/cwtools.rb
