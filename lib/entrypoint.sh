@@ -17,7 +17,11 @@ export PATH="$PATH:/github/home/.dotnet/tools"
 
 cd /
 mkdir -p /src
-git clone $INPUT_RULES /src/cwtools-$INPUT_GAME-config
+if [ "$INPUT_RULES" = "" ]; then
+  git clone https://github.com/cwtools/cwtools-$INPUT_GAME-config.git /src/cwtools-$INPUT_GAME-config
+else
+  git clone $INPUT_RULES /src/cwtools-$INPUT_GAME-config
+fi
 
 cd /src/cwtools-$INPUT_GAME-config
 git fetch
