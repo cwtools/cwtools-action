@@ -57,6 +57,7 @@ end
 
 @SUPPRESSED_OFFENCE_CATEGORIES = JSON.parse(ENV["INPUT_SUPPRESSEDOFFENCECATEGORIES"])
 @GAME = ENV["INPUT_GAME"]
+@LOC_LANGUAGES = ENV["INPUT_LOCLANGUAGES"]
 
 @changed_files = []
 @check_name = "CWTools"
@@ -154,11 +155,11 @@ def run_cwtools
   puts "Running CWToolsCLI now..."
   Dir.chdir(@GITHUB_WORKSPACE) do
     if !@CACHE_FULL
-      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json all"
-      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json all`  
+      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
+      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`  
     else
-      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype full --reporttype json --scope mods --outputfile output.json all"
-      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype full --reporttype json --scope mods --outputfile output.json all`
+      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
+      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`
     end
     errors = JSON.parse(`cat output.json`)
   end

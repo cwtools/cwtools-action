@@ -82,6 +82,19 @@ Path to the full cache file (`cwb.bz2`) in `$GITHUB_WORKSPACE` (root of reposito
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+### locLanguages (optional)
+
+Which languages to check localisation for, space separated, lowercase (eg. `english spanish russian`). Note: May be different from game to game. (Default: `english`)
+
+```yml
+    - uses: cwtools/cwtools-action@v1.0.0
+      with:
+        game: hoi4
+        locLanguages: "english spanish russian"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ### rules (optional)
 
 What rules repository to use (Default: `https://github.com/cwtools/cwtools-$INPUT_GAME-config.git`)
