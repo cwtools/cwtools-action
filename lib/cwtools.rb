@@ -262,7 +262,9 @@ def run
     end
     #fail if conclusion == "failure"
     update_check(id, conclusion, nil)
-  rescue
+  rescue => e
+    puts "Error during processing: #{$!}"
+    puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
     update_check(id, "failure", nil)
     fail("There was an unhandled exception. Exiting with a non-zero error code...")
   end
