@@ -4,7 +4,7 @@ Run CWTools on your Clausewitz mod PDXScript code in parallel to your builds.
 
 If CWTools finds errors, warnings or suggestions in the mod code then they will be output.
 
-It will also insert them as inline feedback into your PRs:
+It will also insert them as inline feedback into your PRs ("Files changed" tab):
 
 ![pr_example](./etc/cwtools_pr_example.png)
 
@@ -52,6 +52,8 @@ The full `output.json` log is saved to `$GITHUB_WORKSPACE`, and can be recovered
         name: cwtools_output
         path: output.json
 ```
+
+This action will create a new job called "CWTools", which will be used to annotate your code. Its success or failure state depends on the CWTools output.
 
 ## Configuration
 
