@@ -69,6 +69,19 @@ What game to use. Allowed values: `hoi4`, `ck2`, `eu4`, `ir`, `stellaris`, `vic2
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+### modPath (optional)
+
+Path to the mod folder in `$GITHUB_WORKSPACE` (root of repository). (Default: "" - root of repository itself)
+
+```yml
+    - uses: cwtools/cwtools-action@v1.0.0
+      with:
+        game: hoi4
+        path: "mod_folder"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ### cache (optional)
 
 Path to the full cache file (`cwb.bz2`) in `$GITHUB_WORKSPACE` (root of repository). Use an empty string to use metadata from cwtools/cwtools-cache-files (Default: use metadata)

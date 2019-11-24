@@ -8,6 +8,10 @@ inputs:
   game:
     description: 'What game to use. Supported values: hoi4, ck2, eu4, ir, stellaris, vic2.'
     required: true
+  modPath:
+    description: 'Path to the mod folder in $GITHUB_WORKSPACE (root of repository). (Default: "" - root of repository itself)'
+    required: false
+    default: ''
   cache:
     description: 'Path to the full cache file (cwb.bz2) in $GITHUB_WORKSPACE (root of repository). Use an empty string to use metadata from cwtools/cwtools-cache-files (Default: use metadata)'
     required: false
