@@ -71,7 +71,7 @@ What game to use. Allowed values: `hoi4`, `ck2`, `eu4`, `ir`, `stellaris`, `vic2
 
 ### cache (optional)
 
-Path to the full cache file (`cwb.bz2`) in $GITHUB_WORKSPACE (root of repository). Use an empty string to use metadata from cwtools/cwtools-cache-files (Default: use metadata)
+Path to the full cache file (`cwb.bz2`) in `$GITHUB_WORKSPACE` (root of repository). Use an empty string to use metadata from cwtools/cwtools-cache-files (Default: use metadata)
 
 ```yml
     - uses: cwtools/CWTools-action@master
@@ -84,7 +84,7 @@ Path to the full cache file (`cwb.bz2`) in $GITHUB_WORKSPACE (root of repository
 
 ### rules (optional)
 
-What rules repository to use (Default: https://github.com/cwtools/cwtools-$INPUT_GAME-config.git)
+What rules repository to use (Default: `https://github.com/cwtools/cwtools-$INPUT_GAME-config.git`)
 
 ```yml
     - uses: cwtools/CWTools-action@master
@@ -97,7 +97,7 @@ What rules repository to use (Default: https://github.com/cwtools/cwtools-$INPUT
 
 ### rulesRef (optional)
 
-What ref on rules repo to checkout (Default: master)
+What ref on rules repo to checkout (Default: `master`)
 
 ```yml
     - uses: cwtools/CWTools-action@master
@@ -153,7 +153,7 @@ In order to validate correctly, CWTools requires certain data from the vanilla g
 
 #### Metadata only
 
-The metadata format contains a limited set of information from vanilla, enough to run the main validator. For convenience CWTools automatically generates these metadata cache files for the latest public rules and latest version of each game. These are found [here](https://github.com/cwtools/cwtools-cache-files) and are used by default in this action.
+The metadata format contains a limited set of information from vanilla, enough to run the main validator. For convenience CWTools automatically generates these metadata cache files for the latest public rules and latest version of each game. These are found [here](https://github.com/cwtools/cwtools-cache-files) and are used by default in this action (Please note that not all games may be supported yet).
 
 #### Full
 
