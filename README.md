@@ -77,7 +77,7 @@ Path to the mod folder in `$GITHUB_WORKSPACE` (root of repository). (Default: ""
     - uses: cwtools/cwtools-action@v1.0.0
       with:
         game: hoi4
-        path: "mod_folder"
+        modPath: "mod_folder"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
