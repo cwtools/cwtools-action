@@ -254,11 +254,11 @@ def run
     output.each do |o|
       update_check(id, nil, o)
     end
-    fail if conclusion == "failure"
+    #fail if conclusion == "failure"
     update_check(id, conclusion, nil)
   rescue
     update_check(id, "failure", nil)
-    fail("At least one check failed! Exiting with a non-zero error code...")
+    fail("There was an unhandled exception. Exiting with a non-zero error code...")
   end
 end
 

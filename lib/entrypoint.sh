@@ -35,6 +35,7 @@ fi
 cd /
 if [ "$INPUT_CACHE" = "" ]; then
   echo "Using metadata cache from 'cwtools/cwtools-cache-files'..."
+  echo "If git fails here, it is most likely because the selected game ($INPUT_GAME) is not yet supported in the 'cwtools/cwtools-cache-files'. In that case, use CWTools.CLI to generate a full cache of selected game and set it with the cache parameter. Consult README for more information."
   git clone --depth=1  --single-branch --branch $INPUT_GAME https://github.com/cwtools/cwtools-cache-files.git cwtools-cache-files
   mv -v cwtools-cache-files/$CWB_GAME.cwv.bz2 .
 else
