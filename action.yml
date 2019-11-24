@@ -1,6 +1,9 @@
 # action.yml
 name: 'CWTools Action'
-description: 'Run CWTools on your HoI4 code'
+description: 'Run CWTools on your Clausewitz mod PDXScript code in parallel to your builds'
+branding:
+  icon: 'code'  
+  color: 'purple'
 inputs: 
   game:
     description: 'What game to use. Supported values: hoi4, ck2, eu4, ir, stellaris, vic2.'
