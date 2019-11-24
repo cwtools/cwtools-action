@@ -10,7 +10,7 @@ It will also insert them as inline feedback into your PRs ("Files changed" tab):
 
 ## Setup
 
-In most cases, no setup is required beyond adding the following workflow yml file to your project and setting the correct game. See below for advanced configuration and an explanation of the tools used.
+In most cases, no setup is required beyond adding the following workflow yml file to your project (`.github/workflows` folder) and setting the correct game. See below for advanced configuration and an explanation of the tools used.
 
 The following games require no further setup:
 
@@ -22,7 +22,7 @@ The following games require no further setup:
 ```yml
 name: CWTools CI
 
-on: [pull_request] # also works with push, other events may work but are not supported
+on: [pull_request, push] # other events may work but are not supported
 
 jobs:
   cwtools_job:
