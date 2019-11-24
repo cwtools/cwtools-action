@@ -161,7 +161,7 @@ The full format contains a more details, processed, version of the vanilla scrip
 
 ## Credits
 
-Created by [Yard1](https://github.com/Yard1)
+Created by Antoni Baum ([Yard1](https://github.com/Yard1)).
 
 Using [tboby/cwtools](https://github.com/tboby/cwtools).
 
