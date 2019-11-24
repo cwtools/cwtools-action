@@ -160,11 +160,11 @@ def run_cwtools
   puts "Running CWToolsCLI now..."
   Dir.chdir(@GITHUB_WORKSPACE) do
     if !@CACHE_FULL
-      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}#{MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
-      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}#{MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`  
+      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
+      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`  
     else
-      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}#{MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
-      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}#{MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`
+      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
+      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`
     end
     errors = JSON.parse(`cat output.json`)
   end
