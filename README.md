@@ -1,7 +1,24 @@
 # CWTools Action
+
 Run CWTools on your Clausewitz mod PDXScript code in parallel to your builds.
 
-## Example workflow yml
+If CWTools finds errors, warnings or suggestions in the mod code then they will be output.
+
+It will also insert them as inline feedback into your PRs:
+
+![pr_example](./etc/cwtools_pr_example.png)
+
+## Setup
+
+In most cases, no setup is required beyond adding the following workflow yml file to your project and setting the correct game. See below for advanced configuration and an explanation of the tools used.
+
+The following games require no further setup:
+
+- HOI4
+- Stellaris
+
+### Example workflow yml
+
 ```yml
 name: CWTools CI
 
@@ -16,11 +33,12 @@ jobs:
       with:
         game: hoi4
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required, secret is automatically set by github
 
 ```
 
 The full `output.json` log is saved to `$GITHUB_WORKSPACE`, and can be recovered with [actions/upload-artifact](https://github.com/actions/upload-artifact).
+
 ```yml
     - uses: cwtools/CWTools-action@master
       with:
@@ -35,9 +53,12 @@ The full `output.json` log is saved to `$GITHUB_WORKSPACE`, and can be recovered
         path: output.json
 ```
 
-## Inputs
+## Configuration
+
 ### game (required)
+
 What game to use. Allowed values: `hoi4`, `ck2`, `eu4`, `ir`, `stellaris`, `vic2`.
+
 ```yml
     - uses: cwtools/CWTools-action@master
       with:
@@ -45,8 +66,11 @@ What game to use. Allowed values: `hoi4`, `ck2`, `eu4`, `ir`, `stellaris`, `vic2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
 ### cache (optional)
+
 Path to the full cache file (`cwb.bz2`) in $GITHUB_WORKSPACE (root of repository). Use an empty string to use metadata from cwtools/cwtools-cache-files (Default: use metadata)
+
 ```yml
     - uses: cwtools/CWTools-action@master
       with:
@@ -55,8 +79,11 @@ Path to the full cache file (`cwb.bz2`) in $GITHUB_WORKSPACE (root of repository
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
 ### rules (optional)
+
 What rules repository to use (Default: https://github.com/cwtools/cwtools-$INPUT_GAME-config.git)
+
 ```yml
     - uses: cwtools/CWTools-action@master
       with:
@@ -65,8 +92,11 @@ What rules repository to use (Default: https://github.com/cwtools/cwtools-$INPUT
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
 ### rulesRef (optional)
+
 What ref on rules repo to checkout (Default: master)
+
 ```yml
     - uses: cwtools/CWTools-action@master
       with:
@@ -75,8 +105,11 @@ What ref on rules repo to checkout (Default: master)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
 ### changedFilesOnly (optional)
+
 By default will only annotate changed files, in order to annotate all files set `changedFilesOnly` input to `"0"`.
+
 ```yml
     - uses: cwtools/CWTools-action@master
       with:
@@ -85,8 +118,11 @@ By default will only annotate changed files, in order to annotate all files set 
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
 ### suppressedOffenceCategories (optional)
+
 You can choose to suppress annotations with chosen CWTools offence category IDs (`CW###`) per Github severity type (failure, warning, notice).
+
 ```yml
     - uses: cwtools/CWTools-action@master
       with:
@@ -96,7 +132,35 @@ You can choose to suppress annotations with chosen CWTools offence category IDs 
         default: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+## How this works
+
+[CWTools](https://github.com/tboby/cwtools) is a .NET library that provides features to analyse and manipulate the scripting language used in Paradox Development Studio's games (PDXScript). This is mainly used in a VS Code extension, [cwtools-vscode](https://marketplace.visualstudio.com/items?itemName=tboby.cwtools-vscode). CWTools also provides a CLI tool [CWTools.CLI](https://www.nuget.org/packages/CWTools.CLI/) to allow automated anaylsis, which is what this Action relies on.
+
+This Action relies on two things:
+
+1. A set of valiation rules written for the game your mod is for
+2. A cache file containing key information from vanilla files
+
+### Validation rules
+
+The validation rules are taken from the master branch of the public repository for the game, e.g. [https://github.com/cwtools/cwtools-hoi4-config](https://github.com/cwtools/cwtools-hoi4-config). The settings `rules` and `rulesRef` can be used to specify an alternative repo, or to stay on an old version of the rules.
+
+### Vanilla cache file
+
+In order to validate correctly, CWTools requires certain data from the vanilla game files such as defined localisation, variables, etc. There are two formats of cache file:
+
+#### Metadata only
+
+The metadata format contains a limited set of information from vanilla, enough to run the main validator. For convenience CWTools automatically generates these metadata cache files for the latest public rules and latest version of each game. These are found [here](https://github.com/cwtools/cwtools-cache-files) and are used by default in this action.
+
+#### Full
+
+The full format contains a more details, processed, version of the vanilla script files. This is required in order to provide accurate validation taking load order and file overrides into account. This is the same format used by cwtools-vscode. We do not provide these files, however this action can be configured to use them.
+
 ## Credits
+
+Created by [Yard1](https://github.com/Yard1)
+
 Using [tboby/cwtools](https://github.com/tboby/cwtools).
 
 Based on [gimenete/rubocop-action](https://github.com/gimenete/rubocop-action) by Alberto Gimeno.
