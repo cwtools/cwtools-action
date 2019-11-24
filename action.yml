@@ -2,7 +2,7 @@
 name: 'CWTools Action'
 description: 'Run CWTools on your Clausewitz mod PDXScript code in parallel to your builds'
 branding:
-  icon: 'code'  
+  icon: 'check'  
   color: 'purple'
 inputs: 
   game:
