@@ -22,13 +22,13 @@ The following games require no further setup:
 ```yml
 name: CWTools CI
 
-on: [pull_request] # also works with push
+on: [pull_request] # also works with push, other events may work but are not supported
 
 jobs:
   cwtools_job:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v1 # required
     - uses: cwtools/CWTools-action@master
       with:
         game: hoi4
@@ -36,6 +36,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # required, secret is automatically set by github
 
 ```
+
+This action will create a new job called "CWTools", which will be used to annotate your code. Its success or failure state depends on the CWTools output.
 
 The full `output.json` log is saved to `$GITHUB_WORKSPACE`, and can be recovered with [actions/upload-artifact](https://github.com/actions/upload-artifact).
 
@@ -52,8 +54,6 @@ The full `output.json` log is saved to `$GITHUB_WORKSPACE`, and can be recovered
         name: cwtools_output
         path: output.json
 ```
-
-This action will create a new job called "CWTools", which will be used to annotate your code. Its success or failure state depends on the CWTools output.
 
 ## Configuration
 
@@ -110,7 +110,7 @@ What ref on rules repo to checkout (Default: `master`)
 
 ### changedFilesOnly (optional)
 
-By default will only annotate changed files, in order to annotate all files set `changedFilesOnly` input to `"0"`.
+By default will only annotate changed files in a push or a pull request. In order to annotate all files set `changedFilesOnly` input to `"0"`.
 
 ```yml
     - uses: cwtools/CWTools-action@master
@@ -136,9 +136,9 @@ You can choose to suppress annotations with chosen CWTools offence category IDs 
 
 ## How this works
 
-[CWTools](https://github.com/tboby/cwtools) is a .NET library that provides features to analyse and manipulate the scripting language used in Paradox Development Studio's games (PDXScript). This is mainly used in a VS Code extension, [cwtools-vscode](https://marketplace.visualstudio.com/items?itemName=tboby.cwtools-vscode). CWTools also provides a CLI tool [CWTools.CLI](https://www.nuget.org/packages/CWTools.CLI/) to allow automated anaylsis, which is what this Action relies on.
+[CWTools](https://github.com/tboby/cwtools) is a .NET library that provides features to analyse and manipulate the scripting language used in Paradox Development Studio's games (PDXScript). This is mainly used in a VS Code extension, [cwtools-vscode](https://marketplace.visualstudio.com/items?itemName=tboby.cwtools-vscode). CWTools also provides a CLI tool [CWTools.CLI](https://www.nuget.org/packages/CWTools.CLI/) to allow automated anaylsis, which is what this action relies on.
 
-This Action relies on two things:
+This action relies on two things:
 
 1. A set of valiation rules written for the game your mod is for
 2. A cache file containing key information from vanilla files
@@ -153,7 +153,7 @@ In order to validate correctly, CWTools requires certain data from the vanilla g
 
 #### Metadata only
 
-The metadata format contains a limited set of information from vanilla, enough to run the main validator. For convenience CWTools automatically generates these metadata cache files for the latest public rules and latest version of each game. These are found [here](https://github.com/cwtools/cwtools-cache-files) and are used by default in this action (Please note that not all games may be supported yet).
+The metadata format contains a limited set of information from vanilla, enough to run the main validator. For convenience CWTools automatically generates these metadata cache files for the latest public rules and latest version of each game. These are found [here](https://github.com/cwtools/cwtools-cache-files) and are used by default in this action (please note that not all games may be supported yet).
 
 #### Full
 
