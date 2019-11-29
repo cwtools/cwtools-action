@@ -151,7 +151,8 @@ end
 
 def return_reviewdog_check(file, output)
   output["annotations"].each do |annotation|
-    file.puts "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{annotation["message"]}"
+    #file.puts "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{annotation["message"]}"
+    `echo "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{annotation["message"]}" >> "#{@CW_WORKSPACE}/errors.txt"`
   end
 end
 
@@ -250,7 +251,7 @@ def run_gitlab
     output = results["output"]
     STDERR.puts "Updating checks..."
     Dir.chdir(@CW_WORKSPACE) do
-      file = File.open("errors.txt", "w")
+      #file = File.open("errors.txt", "w")
       output.each do |o|
         return_reviewdog_check(file, o)
       end
