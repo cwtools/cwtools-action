@@ -63,6 +63,19 @@ end
 
 @changed_files = []
 
+@annotation_levels = {
+  "error" => 'failure',
+  "warning" => 'warning',
+  "information" => 'notice',
+  "hint" => 'notice'
+}
+
+@reviewdog_annotation_levels = {
+  "failure" => '❌ Failure: ',
+  "warning" => '⚠️ Warning: ',
+  "notice" => 'ℹ️ Notice: ',
+}
+
 if @CW_CI_ENV == "github"
   @event = JSON.parse(File.read(@CW_EVENT_PATH))
   @repository = @event["repository"]
@@ -155,16 +168,10 @@ end
 
 def return_reviewdog_check(file, output)
   output["annotations"].each do |annotation|
-    file.puts "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{annotation["message"]}"
+
+    file.puts "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{@reviewdog_annotation_levels[annotation_level]}#{annotation["message"]}"
   end
 end
-
-@annotation_levels = {
-  "error" => 'failure',
-  "warning" => 'warning',
-  "information" => 'notice',
-  "hint" => 'notice'
-}
 
 def run_cwtools
   annotations = []
