@@ -41,10 +41,13 @@ require 'set'
 @CHANGED_ONLY = ENV["INPUT_CHANGEDFILESONLY"]
 @CACHE_FULL = ENV["INPUT_CACHE"]
 
-if @CHANGED_ONLY == '0' || @CHANGED_ONLY.downcase == 'false'
-  @CHANGED_ONLY = false
-else
-  @CHANGED_ONLY = true
+@CHANGED_ONLY = false
+if @CW_CI_ENV == "github"
+  if @CHANGED_ONLY == '0' || @CHANGED_ONLY.downcase == 'false'
+    @CHANGED_ONLY = false
+  else
+    @CHANGED_ONLY = true
+  end
 end
 
 if @CACHE_FULL == ''
@@ -151,8 +154,7 @@ end
 
 def return_reviewdog_check(file, output)
   output["annotations"].each do |annotation|
-    #file.puts "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{annotation["message"]}"
-    `echo "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{annotation["message"]}" >> "#{@CW_WORKSPACE}/errors.txt"`
+    file.puts "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{annotation["message"]}"
   end
 end
 
@@ -251,7 +253,7 @@ def run_gitlab
     output = results["output"]
     STDERR.puts "Updating checks..."
     Dir.chdir(@CW_WORKSPACE) do
-      #file = File.open("errors.txt", "w")
+      file = File.open("errors.txt", "w")
       output.each do |o|
         return_reviewdog_check(file, o)
       end
@@ -299,6 +301,11 @@ end
 def run
   STDERR.puts "CWTOOLS CHECK"
   STDERR.puts "CI ENVIROMENT: #{@CW_CI_ENV}"
+  if @CHANGED_ONLY
+    STDERR.puts "Annotate only changed files"
+  else
+    STDERR.puts "Annotate all files"
+  end
   if @CW_CI_ENV == "github"
     run_github()
   elsif @CW_CI_ENV == "gitlab"
