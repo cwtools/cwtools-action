@@ -15,16 +15,16 @@ elif [ -n "$CI_PROJECT_DIR" ]; then
   export CW_WORKSPACE=$CI_PROJECT_DIR
 fi
 
-echo "CI Enviroment detected as $CW_CI_ENV"
+echo "CI Enviroment detected as $CW_CI_ENV..."
 
 case $INPUT_GAME in
-  "hoi4") echo "Game selected as $INPUT_GAME" ;;
-  "ck2") echo "Game selected as $INPUT_GAME" ;;
-  "eu4") echo "Game selected as $INPUT_GAME" ;;
-  "vic2") echo "Game selected as $INPUT_GAME" ;;
-  "ir") echo "Game selected as $INPUT_GAME" ;;
-  "stellaris") echo "Game selected as $INPUT_GAME" ;;
-  *) echo "Wrong game, $INPUT_GAME is not valid" 1>&2 ; exit 1 # terminate and indicate error
+  "hoi4") echo "Game selected as $INPUT_GAME..." ;;
+  "ck2") echo "Game selected as $INPUT_GAME..." ;;
+  "eu4") echo "Game selected as $INPUT_GAME..." ;;
+  "vic2") echo "Game selected as $INPUT_GAME..." ;;
+  "ir") echo "Game selected as $INPUT_GAME..." ;;
+  "stellaris") echo "Game selected as $INPUT_GAME..." ;;
+  *) echo "Wrong game, $INPUT_GAME is not valid!" 1>&2 ; exit 1 # terminate and indicate error
 esac
 
 if [ -z "$INPUT_CWTOOLSCLIVERSION" ] || [ "$INPUT_CWTOOLSCLIVERSION" = "" ]; then
@@ -78,10 +78,10 @@ if [ $CW_CI_ENV = "gitlab" ]; then
   if [ -f errors.txt ]; then
     echo "cat $PWD/errors.txt:"
     cat errors.txt
-    echo "Running reviewdog on $PWD/errors.txt"
+    echo "Running reviewdog on $PWD/errors.txt..."
     cat errors.txt | reviewdog -efm="%f:%l:%c:%m" -name="$CW_CHECKNAME" -reporter=gitlab-mr-discussion
   else
-    echo "errors.txt doesn't exist in $CW_WORKSPACE"
+    echo "errors.txt doesn't exist in $CW_WORKSPACE!"
     exit 1
   fi
 fi

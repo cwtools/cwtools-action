@@ -267,7 +267,7 @@ end
 
 def run_github
   unless defined?(@CW_TOKEN)
-    raise "CW_TOKEN environment variable has not been defined"
+    raise "CW_TOKEN environment variable has not been defined!"
   end
   if @is_pull_request
     STDERR.puts "Is pull request..."
@@ -302,9 +302,9 @@ def run
   STDERR.puts "CWTOOLS CHECK"
   STDERR.puts "CI ENVIROMENT: #{@CW_CI_ENV}"
   if @CHANGED_ONLY
-    STDERR.puts "Annotate only changed files"
+    STDERR.puts "Annotate only changed files..."
   else
-    STDERR.puts "Annotate all files"
+    STDERR.puts "Annotate all files..."
   end
   if @CW_CI_ENV == "github"
     run_github()
