@@ -76,6 +76,12 @@ end
   "notice" => 'ℹ️ Notice: ',
 }
 
+@reviewdog_error_types = {
+  "failure" => 'E',
+  "warning" => 'W',
+  "notice" => 'I',
+}
+
 if @CW_CI_ENV == "github"
   @event = JSON.parse(File.read(@CW_EVENT_PATH))
   @repository = @event["repository"]
@@ -169,7 +175,7 @@ end
 def return_reviewdog_check(file, output)
   output["annotations"].each do |annotation|
 
-    file.puts "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{@reviewdog_annotation_levels[annotation_level]}#{annotation["message"]}"
+    file.puts "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{@reviewdog_error_types[annotation["annotation_level"]]}:#{@reviewdog_annotation_levels[annotation["annotation_level"]]}#{annotation["message"]}"
   end
 end
 
