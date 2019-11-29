@@ -251,9 +251,9 @@ def run_gitlab
     STDERR.puts "Updating checks..."
     Dir.chdir(@CW_WORKSPACE) do
       file = File.open("errors.txt", "w")
-    end
-    output.each do |o|
-      return_reviewdog_check(file, o)
+      output.each do |o|
+        return_reviewdog_check(file, o)
+      end
     end
   rescue => e
     STDERR.puts "Error during processing: #{$!}"
