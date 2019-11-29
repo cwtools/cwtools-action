@@ -27,61 +27,64 @@ require 'json'
 require 'time'
 require 'set'
 
-@GITHUB_EVENT_PATH = ENV["GITHUB_EVENT_PATH"]
-@GITHUB_TOKEN = ENV["GITHUB_TOKEN"]
-@GITHUB_WORKSPACE = ENV["GITHUB_WORKSPACE"]
+@CW_EVENT_PATH = ENV["CW_EVENT"]
+@CW_TOKEN = ENV["CW_TOKEN"]
+@CW_WORKSPACE = ENV["CW_WORKSPACE"]
+@CW_SHA = ENV["CW_SHA"]
+@check_name = ENV["CW_CHECKNAME"]
+@CW_CI_ENV=ENV["CW_CI_ENV"]
 
-@event = JSON.parse(File.read(ENV["GITHUB_EVENT_PATH"]))
-@repository = @event["repository"]
-@owner = @repository["owner"]["login"]
-@repo = @repository["name"]
-@GITHUB_SHA = ENV["GITHUB_SHA"]
-@is_pull_request = false
-unless @event["pull_request"].nil?
-  @GITHUB_SHA = @event["pull_request"]["head"]["sha"]
-  @is_pull_request = [@event["pull_request"]["base"]["ref"], @event["pull_request"]["head"]["ref"]]
-end
+@SUPPRESSED_OFFENCE_CATEGORIES = JSON.parse(ENV["INPUT_SUPPRESSEDOFFENCECATEGORIES"])
+@GAME = ENV["INPUT_GAME"]
+@LOC_LANGUAGES = ENV["INPUT_LOCLANGUAGES"]
+@MOD_PATH = ENV["INPUT_MODPATH"]
 @CHANGED_ONLY = ENV["INPUT_CHANGEDFILESONLY"]
+@CACHE_FULL = ENV["INPUT_CACHE"]
+
 if @CHANGED_ONLY == '0' || @CHANGED_ONLY.downcase == 'false'
   @CHANGED_ONLY = false
 else
   @CHANGED_ONLY = true
 end
 
-@CACHE_FULL = ENV["INPUT_CACHE"]
 if @CACHE_FULL == ''
   @CACHE_FULL = false
 else
   @CACHE_FULL = true
 end
 
-@SUPPRESSED_OFFENCE_CATEGORIES = JSON.parse(ENV["INPUT_SUPPRESSEDOFFENCECATEGORIES"])
-@GAME = ENV["INPUT_GAME"]
-@LOC_LANGUAGES = ENV["INPUT_LOCLANGUAGES"]
-@MOD_PATH = ENV["INPUT_MODPATH"]
-
 if @MOD_PATH != ''
   @MOD_PATH = "/" + @MOD_PATH
 end
 
 @changed_files = []
-@check_name = "CWTools"
 
-@headers = {
-  "Content-Type": 'application/json',
-  "Accept": 'application/vnd.github.antiope-preview+json',
-  "Authorization": "Bearer #{@GITHUB_TOKEN}",
-  "User-Agent": 'cwtools-action'
-}
+if @CW_CI_ENV == "github"
+  @event = JSON.parse(File.read(@CW_EVENT_PATH))
+  @repository = @event["repository"]
+  @owner = @repository["owner"]["login"]
+  @repo = @repository["name"]
+  @is_pull_request = false
+  unless @event["pull_request"].nil?
+    @CW_SHA = @event["pull_request"]["head"]["sha"]
+    @is_pull_request = [@event["pull_request"]["base"]["ref"], @event["pull_request"]["head"]["ref"]]
+  end
+  @headers = {
+    "Content-Type": 'application/json',
+    "Accept": 'application/vnd.github.antiope-preview+json',
+    "Authorization": "Bearer #{@CW_TOKEN}",
+    "User-Agent": 'cwtools-action'
+  }
+end
 
 def get_changed_files
   diff_output = nil
-  Dir.chdir(@GITHUB_WORKSPACE) do
+  Dir.chdir(@CW_WORKSPACE) do
     if @is_pull_request
       diff_output = `git log --name-only --pretty="" origin/#{@is_pull_request[0]}..origin/#{@is_pull_request[1]}`
     else
       before_commit = @event["before"]
-      diff_output = `git diff --name-only #{before_commit} #{@GITHUB_SHA}`
+      diff_output = `git diff --name-only #{before_commit} #{@CW_SHA}`
     end
   end
   unless diff_output.nil?
@@ -95,10 +98,10 @@ def get_changed_files
   @changed_files = diff_output
 end
 
-def create_check
+def create_github_check
   body = {
     "name" => @check_name,
-    "head_sha" => @GITHUB_SHA,
+    "head_sha" => @CW_SHA,
     "status" => "in_progress",
     "started_at" => Time.now.iso8601
   }
@@ -110,7 +113,7 @@ def create_check
   resp = http.post(path, body.to_json, @headers)
 
   if resp.code.to_i >= 300
-    puts JSON.pretty_generate(resp.body)
+    STDERR.puts JSON.pretty_generate(resp.body)
     raise resp.message
   end
 
@@ -118,17 +121,17 @@ def create_check
   return data["id"]
 end
 
-def update_check(id, conclusion, output)
+def update_github_check(id, conclusion, output)
   if conclusion.nil?
     body = {
       "name" => @check_name,
-      "head_sha" => @GITHUB_SHA,
+      "head_sha" => @CW_SHA,
       "output" => output
     }
   else
     body = {
       "name" => @check_name,
-      "head_sha" => @GITHUB_SHA,
+      "head_sha" => @CW_SHA,
       "status" => 'completed',
       "completed_at" => Time.now.iso8601,
       "conclusion" => conclusion
@@ -141,11 +144,16 @@ def update_check(id, conclusion, output)
   resp = http.patch(path, body.to_json, @headers)
 
   if resp.code.to_i >= 300
-    puts JSON.pretty_generate(resp.body)
+    STDERR.puts JSON.pretty_generate(resp.body)
     raise resp.message
   end
 end
 
+def return_reviewdog_check(file, output)
+  output["annotations"].each do |annotation|
+    file.puts "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{annotation["message"]}"
+  end
+end
 
 @annotation_levels = {
   "error" => 'failure',
@@ -157,24 +165,24 @@ end
 def run_cwtools
   annotations = []
   errors = nil
-  puts "Running CWToolsCLI now..."
-  Dir.chdir(@GITHUB_WORKSPACE) do
+  STDERR.puts "Running CWToolsCLI now..."
+  Dir.chdir(@CW_WORKSPACE) do
     if !@CACHE_FULL
-      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
-      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`  
+      STDERR.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
+      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@CW_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`  
     else
-      puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@GITHUB_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
-      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@GITHUB_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`
+      STDERR.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
+      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@CW_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`
     end
     errors = JSON.parse(`cat output.json`)
   end
-  puts "Done running CWToolsCLI..."
+  STDERR.puts "Done running CWToolsCLI..."
   conclusion = "success"
   count = { "failure" => 0, "warning" => 0, "notice" => 0 }
 
   errors["files"].each do |file|
     path = file["file"]
-    path = path.sub! @GITHUB_WORKSPACE+"/", ''
+    path = path.sub! @CW_WORKSPACE+"/", ''
     path = path.strip
     offenses = file["errors"]
     if !@CHANGED_ONLY || @changed_files.include?(path)
@@ -235,38 +243,63 @@ def run_cwtools
   return { "output" => output, "conclusion" => conclusion }
 end
 
-def run
-  puts "CWTOOLS CHECK"
-  unless defined?(@GITHUB_TOKEN)
-    raise "GITHUB_TOKEN environment variable has not been defined"
+def run_gitlab
+  STDERR.puts "CWTOOLS CHECK"
+  begin
+    results = run_cwtools()
+    conclusion = results["conclusion"]
+    output = results["output"]
+    STDERR.puts "Updating checks..."
+    file = File.open("errors.txt", "w")
+    output.each do |o|
+      return_reviewdog_check(file, o)
+    end
+  rescue => e
+    STDERR.puts "Error during processing: #{$!}"
+    STDERR.puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
+    fail("There was an unhandled exception. Exiting with a non-zero error code...")
+  end
+end
+
+def run_github
+  STDERR.puts "CWTOOLS CHECK"
+  unless defined?(@CW_TOKEN)
+    raise "CW_TOKEN environment variable has not been defined"
   end
   if @is_pull_request
-    puts "Is pull request..."
+    STDERR.puts "Is pull request..."
   else
-    puts "Is commit..."
+    STDERR.puts "Is commit..."
   end
   if @CHANGED_ONLY
-    puts "Annotating only changed files..."
+    STDERR.puts "Annotating only changed files..."
   else
-    puts "Annotating all files..."
+    STDERR.puts "Annotating all files..."
   end
-  id = create_check()
+  id = create_github_check()
   begin
     get_changed_files()
     results = run_cwtools()
     conclusion = results["conclusion"]
     output = results["output"]
-    puts "Updating checks..."
+    STDERR.puts "Updating checks..."
     output.each do |o|
-      update_check(id, nil, o)
+      update_github_check(id, nil, o)
     end
-    #fail if conclusion == "failure"
-    update_check(id, conclusion, nil)
+    update_github_check(id, conclusion, nil)
   rescue => e
-    puts "Error during processing: #{$!}"
-    puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
-    update_check(id, "failure", nil)
+    STDERR.puts "Error during processing: #{$!}"
+    STDERR.puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
+    update_github_check(id, "failure", nil)
     fail("There was an unhandled exception. Exiting with a non-zero error code...")
+  end
+end
+
+def run
+  if @CW_CI_ENV == "github"
+    run_github()
+  elsif @CW_CI_ENV == "gitlab"
+    run_gitlab()
   end
 end
 

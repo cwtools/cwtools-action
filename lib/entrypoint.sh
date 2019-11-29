@@ -2,6 +2,20 @@
 
 set -e
 
+export CW_CHECKNAME="CWTools"
+
+if [ -z "$GITHUB_SHA" ]; then
+      export CW_CI_ENV="github"
+      export CW_EVENT=$GITHUB_EVENT_PATH
+      export CW_TOKEN=$GITHUB_TOKEN
+      export CW_WORKSPACE=$GITHUB_WORKSPACE
+      export CW_SHA=$GITHUB_SHA
+else
+      export CW_CI_ENV="gitlab"
+      export CW_WORKSPACE=$CI_PROJECT_DIR
+      export CW_SHA=$CI_PROJECT_DIR
+fi
+
 case $INPUT_GAME in
   "hoi4") echo "Game selected as $INPUT_GAME" ;;
   "ck2") echo "Game selected as $INPUT_GAME" ;;
@@ -13,7 +27,17 @@ case $INPUT_GAME in
 esac
 
 dotnet tool install --global -v m CWTools.CLI
-export PATH="$PATH:/github/home/.dotnet/tools"
+if [ $CW_CI_ENV = "github" ]; then
+  export PATH="$PATH:$HOME/.dotnet/tools"
+elif [ $CW_CI_ENV = "gitlab" ]; then
+  export PATH="$PATH:/root/.dotnet/tools"
+  mkdir /action
+  mkdir /action/lib
+  wget https://raw.githubusercontent.com/tboby/cwtools-action/reviewdog-gitlab/lib/entrypoint.sh -O /action/lib/entrypoint.sh
+  wget https://raw.githubusercontent.com/tboby/cwtools-action/reviewdog-gitlab/lib/cwtools.rb -O /action/lib/cwtools.rb
+  apt-get update && apt-get -y install ruby bash git wget p7zip
+  wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s -- -b /usr/local/bin/
+fi
 
 cd /
 mkdir -p /src
@@ -39,8 +63,8 @@ if [ "$INPUT_CACHE" = "" ]; then
   git clone --depth=1  --single-branch --branch $INPUT_GAME https://github.com/cwtools/cwtools-cache-files.git cwtools-cache-files
   mv -v cwtools-cache-files/$CWB_GAME.cwv.bz2 .
 else
-  echo "Using full game cache from '$GITHUB_WORKSPACE/$INPUT_CACHE'..."
-  mv -v $GITHUB_WORKSPACE/$INPUT_CACHE .
+  echo "Using full game cache from '$CW_WORKSPACE/$INPUT_CACHE'..."
+  mv -v $CW_WORKSPACE/$INPUT_CACHE .
 
   if [ ! -f "$CWB_GAME.cwb.bz2" ]; then
       echo "$CWB_GAME.cwb.bz2 does not exist!"
@@ -48,3 +72,8 @@ else
   fi
 fi
 ruby /action/lib/cwtools.rb
+if [ $CW_CI_ENV = "gitlab" ]; then
+  cp errors.txt $CW_WORKSPACE/errors.txt
+  cd $CW_WORKSPACE
+  cat errors.txt | reviewdog -efm="%f:%l:%c:%m" -name="$CW_CHECKNAME" -reporter=gitlab-mr-discussion
+fi
