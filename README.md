@@ -160,6 +160,19 @@ You can choose to suppress annotations with chosen CWTools offence category IDs 
         default: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+### CWToolsCLIVersion (optional)
+
+Which CWTools.CLI version to use (Default: latest stable).
+
+```yml
+    - uses: cwtools/cwtools-action@v1.0.0
+      with:
+        game: hoi4
+        CWToolsCLIVersion: '0.0.7'
+      env:
+        default: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ## How this works
 
 [CWTools](https://github.com/tboby/cwtools) is a .NET library that provides features to analyse and manipulate the scripting language used in Paradox Development Studio's games (PDXScript). This is mainly used in a VS Code extension, [cwtools-vscode](https://marketplace.visualstudio.com/items?itemName=tboby.cwtools-vscode). CWTools also provides a CLI tool [CWTools.CLI](https://www.nuget.org/packages/CWTools.CLI/) to allow automated anaylsis, which is what this action relies on.

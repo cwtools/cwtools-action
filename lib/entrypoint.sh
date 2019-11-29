@@ -5,15 +5,14 @@ set -e
 export CW_CHECKNAME="CWTools"
 
 if [ -n "$GITHUB_SHA" ]; then
-      export CW_CI_ENV="github"
-      export CW_EVENT=$GITHUB_EVENT_PATH
-      export CW_TOKEN=$GITHUB_TOKEN
-      export CW_WORKSPACE=$GITHUB_WORKSPACE
-      export CW_SHA=$GITHUB_SHA
+  export CW_CI_ENV="github"
+  export CW_EVENT=$GITHUB_EVENT_PATH
+  export CW_TOKEN=$GITHUB_TOKEN
+  export CW_WORKSPACE=$GITHUB_WORKSPACE
+  export CW_SHA=$GITHUB_SHA
 elif [ -n "$CI_PROJECT_DIR" ]; then
-      export CW_CI_ENV="gitlab"
-      export CW_WORKSPACE=$CI_PROJECT_DIR
-      export CW_SHA=$CI_PROJECT_DIR
+  export CW_CI_ENV="gitlab"
+  export CW_WORKSPACE=$CI_PROJECT_DIR
 fi
 
 case $INPUT_GAME in
@@ -26,7 +25,12 @@ case $INPUT_GAME in
   *) echo "Wrong game, $INPUT_GAME is not valid" 1>&2 ; exit 1 # terminate and indicate error
 esac
 
-dotnet tool install --global -v m CWTools.CLI
+if [ -z "$INPUT_CWTOOLSCLIVERSION" ] || [ "$INPUT_CWTOOLSCLIVERSION" = "" ]; then
+  dotnet tool install --global -v m CWTools.CLI
+else
+  dotnet tool install --global -v m CWTools.CLI --version $INPUT_CWTOOLSCLIVERSION
+fi
+
 if [ $CW_CI_ENV = "github" ]; then
   export PATH="$PATH:$HOME/.dotnet/tools"
 elif [ $CW_CI_ENV = "gitlab" ]; then
@@ -35,7 +39,7 @@ fi
 
 cd /
 mkdir -p /src
-if [ "$INPUT_RULES" = "" ]; then
+if [ -z "$INPUT_RULES" ] || [ "$INPUT_RULES" = "" ]; then
   git clone https://github.com/cwtools/cwtools-$INPUT_GAME-config.git /src/cwtools-$INPUT_GAME-config
 else
   git clone $INPUT_RULES /src/cwtools-$INPUT_GAME-config
@@ -51,7 +55,7 @@ if [ "$INPUT_GAME" = "stellaris" ]; then
 fi
 
 cd /
-if [ "$INPUT_CACHE" = "" ]; then
+if [ -z "$INPUT_CACHE" ] || [ "$INPUT_CACHE" = "" ]; then
   echo "Using metadata cache from 'cwtools/cwtools-cache-files'..."
   echo "If git fails here, it is most likely because the selected game ($INPUT_GAME) is not yet supported in the 'cwtools/cwtools-cache-files'. In that case, use CWTools.CLI to generate a full cache of selected game and set it with the cache parameter. Consult README for more information."
   git clone --depth=1  --single-branch --branch $INPUT_GAME https://github.com/cwtools/cwtools-cache-files.git cwtools-cache-files
@@ -66,6 +70,7 @@ else
   fi
 fi
 ruby /action/lib/cwtools.rb
+
 if [ $CW_CI_ENV = "gitlab" ]; then
   cp errors.txt $CW_WORKSPACE/errors.txt
   cd $CW_WORKSPACE

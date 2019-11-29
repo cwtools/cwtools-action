@@ -244,7 +244,6 @@ def run_cwtools
 end
 
 def run_gitlab
-  STDERR.puts "CWTOOLS CHECK"
   begin
     results = run_cwtools()
     conclusion = results["conclusion"]
@@ -262,7 +261,6 @@ def run_gitlab
 end
 
 def run_github
-  STDERR.puts "CWTOOLS CHECK"
   unless defined?(@CW_TOKEN)
     raise "CW_TOKEN environment variable has not been defined"
   end
@@ -296,6 +294,8 @@ def run_github
 end
 
 def run
+  STDERR.puts "CWTOOLS CHECK"
+  STDERR.puts "CI ENVIROMENT: #{@CW_CI_ENV}"
   if @CW_CI_ENV == "github"
     run_github()
   elsif @CW_CI_ENV == "gitlab"

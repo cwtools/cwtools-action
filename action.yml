@@ -36,6 +36,10 @@ inputs:
     description: 'What CWTools offence categories to suppress, in JSON format: {"failure":[], "warning":[], "notice":[]}'
     required: false
     default: '{"failure":[], "warning":[], "notice":[]}'
+  CWToolsCLIVersion:
+    description: 'Which CWTools.CLI version to use (Default: latest stable)'
+    required: false
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
