@@ -1,9 +1,9 @@
-if [ -z "$INPUT_CWTOOLSACTIONREF" ]; then
-    export INPUT_CWTOOLSACTIONBRANCH="gitlab-integration"
+if [ -z "$INPUT_CWTOOLSACTIONREF" ] || [ "$INPUT_CWTOOLSACTIONREF" = "" ]; then
+    INPUT_CWTOOLSACTIONREF="gitlab-integration"
 fi
 
-if [ -z "$INPUT_REVIEWDOGREF" ]; then
-    export INPUT_REVIEWDOGREF="master"
+if [ -z "$INPUT_REVIEWDOGREF" ] || [ "$INPUT_REVIEWDOGREF" = "" ]; then
+    INPUT_REVIEWDOGREF="master"
 fi
 
 mkdir /action
