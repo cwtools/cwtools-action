@@ -100,8 +100,7 @@ ruby /action/lib/cwtools.rb
 if [ $CW_CI_ENV = "gitlab" ]; then
   cd $CW_WORKSPACE
   if [ -f errors.txt ]; then
-    echo "git status for $PWD"
-    git status
+    cat errors.txt
     echo "Running reviewdog on $PWD/errors.txt..."
     cat errors.txt | reviewdog -efm="%f:%l:%c:%t:%m" -name="$CW_CHECKNAME" -reporter=gitlab-mr-discussion
   else
