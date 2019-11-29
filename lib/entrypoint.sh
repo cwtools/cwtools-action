@@ -76,10 +76,13 @@ ruby /action/lib/cwtools.rb
 if [ $CW_CI_ENV = "gitlab" ]; then
   cd $CW_WORKSPACE
   if [ -f errors.txt ]; then
+    echo "cat $PWD/errors.txt:"
     cat errors.txt
+    echo "Running reviewdog on $PWD/errors.txt"
     cat errors.txt | reviewdog -efm="%f:%l:%c:%m" -name="$CW_CHECKNAME" -reporter=gitlab-mr-discussion
   else
-    echo "errors.txt doesn't exist in $CW_WORKSPACE, ls for $CW_WORKSPACE:"
-    ls
+    echo "errors.txt doesn't exist in $CW_WORKSPACE"
   fi
+  echo "ls for $PWD:"
+  ls
 fi

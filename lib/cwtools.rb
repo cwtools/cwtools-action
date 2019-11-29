@@ -303,6 +303,7 @@ def run
   elsif @CW_CI_ENV == "gitlab"
     run_gitlab()
   end
+  STDERR.puts "RUBY SCRIPT FINISHED"
 end
 
 run()
