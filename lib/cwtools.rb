@@ -41,13 +41,14 @@ require 'set'
 @CHANGED_ONLY = ENV["INPUT_CHANGEDFILESONLY"]
 @CACHE_FULL = ENV["INPUT_CACHE"]
 
-@CHANGED_ONLY = false
 if @CW_CI_ENV == "github"
   if @CHANGED_ONLY == '0' || @CHANGED_ONLY.downcase == 'false'
     @CHANGED_ONLY = false
   else
     @CHANGED_ONLY = true
   end
+elsif @CW_CI_ENV == "gitlab"
+  @CHANGED_ONLY = false
 end
 
 if @CACHE_FULL == ''
