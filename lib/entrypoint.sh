@@ -4,13 +4,13 @@ set -e
 
 export CW_CHECKNAME="CWTools"
 
-if [ -z "$GITHUB_SHA" ]; then
+if [ -n "$GITHUB_SHA" ]; then
       export CW_CI_ENV="github"
       export CW_EVENT=$GITHUB_EVENT_PATH
       export CW_TOKEN=$GITHUB_TOKEN
       export CW_WORKSPACE=$GITHUB_WORKSPACE
       export CW_SHA=$GITHUB_SHA
-else
+elif [ -n "$CI_PROJECT_DIR" ]; then
       export CW_CI_ENV="gitlab"
       export CW_WORKSPACE=$CI_PROJECT_DIR
       export CW_SHA=$CI_PROJECT_DIR
@@ -31,12 +31,6 @@ if [ $CW_CI_ENV = "github" ]; then
   export PATH="$PATH:$HOME/.dotnet/tools"
 elif [ $CW_CI_ENV = "gitlab" ]; then
   export PATH="$PATH:/root/.dotnet/tools"
-  mkdir /action
-  mkdir /action/lib
-  wget https://raw.githubusercontent.com/tboby/cwtools-action/reviewdog-gitlab/lib/entrypoint.sh -O /action/lib/entrypoint.sh
-  wget https://raw.githubusercontent.com/tboby/cwtools-action/reviewdog-gitlab/lib/cwtools.rb -O /action/lib/cwtools.rb
-  apt-get update && apt-get -y install ruby bash git wget p7zip
-  wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s -- -b /usr/local/bin/
 fi
 
 cd /
