@@ -1,3 +1,8 @@
+if [ -z "$INPUT_GAME" ] || [ "$INPUT_GAME" = "" ]; then
+    echo "The required INPUT_GAME enviromental variable is not set!"
+    exit 1
+fi
+
 if [ -z "$INPUT_CWTOOLSACTIONREF" ] || [ "$INPUT_CWTOOLSACTIONREF" = "" ]; then
     INPUT_CWTOOLSACTIONREF="gitlab-integration"
 fi

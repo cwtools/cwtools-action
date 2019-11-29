@@ -13,6 +13,30 @@ if [ -n "$GITHUB_SHA" ]; then
 elif [ -n "$CI_PROJECT_DIR" ]; then
   export CW_CI_ENV="gitlab"
   export CW_WORKSPACE=$CI_PROJECT_DIR
+  if [ -z "$INPUT_MODPATH" ] || [ "$INPUT_MODPATH" = "" ]; then
+      export INPUT_MODPATH=''
+  fi
+  if [ -z "$INPUT_CACHE" ] || [ "$INPUT_CACHE" = "" ]; then
+      export INPUT_CACHE=''
+  fi
+  if [ -z "$INPUT_LOCLANGUAGES" ] || [ "$INPUT_LOCLANGUAGES" = "" ]; then
+      export INPUT_LOCLANGUAGES='english'
+  fi
+  if [ -z "$INPUT_RULES" ] || [ "$INPUT_RULES" = "" ]; then
+      export INPUT_RULES=''
+  fi
+  if [ -z "$INPUT_RULESREF" ] || [ "$INPUT_RULESREF" = "" ]; then
+      export INPUT_RULES='master'
+  fi
+  if [ -z "$INPUT_CHANGEDFILESONLY" ] || [ "$INPUT_CHANGEDFILESONLY" = "" ]; then
+      export INPUT_CHANGEDFILESONLY='0' # this is disabled for gitlab anyway
+  fi
+  if [ -z "$INPUT_SUPPRESSEDOFFENCECATEGORIES" ] || [ "$INPUT_SUPPRESSEDOFFENCECATEGORIES" = "" ]; then
+      export INPUT_SUPPRESSEDOFFENCECATEGORIES='{"failure":[], "warning":[], "notice":[]}'
+  fi
+  if [ -z "$INPUT_CWTOOLSCLIVERSION" ] || [ "$INPUT_CWTOOLSCLIVERSION" = "" ]; then
+      export INPUT_CWTOOLSCLIVERSION=''
+  fi
 fi
 
 echo "CI Enviroment detected as $CW_CI_ENV..."
