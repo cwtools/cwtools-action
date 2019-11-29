@@ -11,9 +11,5 @@ wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/$INPUT_REVIEW
 
 cd /
 git clone --depth=1  --single-branch --branch $INPUT_CWTOOLSACTIONREF https://github.com/cwtools/cwtools-action.git action
-cd action
-git fetch
-git pull
-cd lib
-chmod +x entrypoint.sh
-./entrypoint.sh
+chmod +x /action/lib/entrypoint.sh
+/action/lib/entrypoint.sh
