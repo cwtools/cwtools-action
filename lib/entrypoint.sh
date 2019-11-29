@@ -15,6 +15,8 @@ elif [ -n "$CI_PROJECT_DIR" ]; then
   export CW_WORKSPACE=$CI_PROJECT_DIR
 fi
 
+echo "CI Enviroment detected as $CW_CI_ENV"
+
 case $INPUT_GAME in
   "hoi4") echo "Game selected as $INPUT_GAME" ;;
   "ck2") echo "Game selected as $INPUT_GAME" ;;
@@ -72,7 +74,11 @@ fi
 ruby /action/lib/cwtools.rb
 
 if [ $CW_CI_ENV = "gitlab" ]; then
-  cp errors.txt $CW_WORKSPACE/errors.txt
   cd $CW_WORKSPACE
-  cat errors.txt | reviewdog -efm="%f:%l:%c:%m" -name="$CW_CHECKNAME" -reporter=gitlab-mr-discussion
+  if [ -f errors.txt ]; then
+    cat errors.txt | reviewdog -efm="%f:%l:%c:%m" -name="$CW_CHECKNAME" -reporter=gitlab-mr-discussion
+  else
+    echo "errors.txt doesn't exist in $CW_WORKSPACE, ls for $CW_WORKSPACE:"
+    ls
+  fi
 fi

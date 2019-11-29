@@ -249,7 +249,9 @@ def run_gitlab
     conclusion = results["conclusion"]
     output = results["output"]
     STDERR.puts "Updating checks..."
-    file = File.open("errors.txt", "w")
+    Dir.chdir(@CW_WORKSPACE) do
+      file = File.open("errors.txt", "w")
+    end
     output.each do |o|
       return_reviewdog_check(file, o)
     end
