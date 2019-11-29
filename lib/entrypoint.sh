@@ -79,7 +79,7 @@ if [ $CW_CI_ENV = "gitlab" ]; then
     echo "cat $PWD/errors.txt:"
     cat errors.txt
     echo "Running reviewdog on $PWD/errors.txt..."
-    cat errors.txt | reviewdog -efm="%f:%l:%c:%m" -name="$CW_CHECKNAME" -reporter=gitlab-mr-discussion
+    cat errors.txt | reviewdog -efm="%f:%l:%c:%m" -name="cwtools" -reporter=gitlab-mr-discussion
   else
     echo "errors.txt doesn't exist in $CW_WORKSPACE!"
     exit 1
