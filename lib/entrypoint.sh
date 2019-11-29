@@ -26,7 +26,7 @@ elif [ -n "$CI_PROJECT_DIR" ]; then
       export INPUT_RULES=''
   fi
   if [ -z "$INPUT_RULESREF" ] || [ "$INPUT_RULESREF" = "" ]; then
-      export INPUT_RULES='master'
+      export INPUT_RULESREF='master'
   fi
   if [ -z "$INPUT_CHANGEDFILESONLY" ] || [ "$INPUT_CHANGEDFILESONLY" = "" ]; then
       export INPUT_CHANGEDFILESONLY='0' # this is disabled for gitlab anyway
