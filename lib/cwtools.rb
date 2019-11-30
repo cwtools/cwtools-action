@@ -173,9 +173,7 @@ def update_github_check(id, conclusion, output)
 end
 
 def return_reviewdog_check(file, output)
-  p @reviewdog_error_types
   output["annotations"].each do |annotation|
-    p annotation
     file.puts "#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{@reviewdog_error_types[annotation["annotation_level"]]}:#{@reviewdog_annotation_levels[annotation["annotation_level"]]}#{annotation["message"]}"
   end
 end
