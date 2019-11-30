@@ -101,6 +101,7 @@ if @CW_CI_ENV == "github"
   }
 elsif @CW_CI_ENV == "gitlab"
   @event = JSON.parse(`curl --header "PRIVATE-TOKEN: #{@CW_TOKEN}" https://gitlab.com/api/v4/projects/#{ENV["CI_PROJECT_ID"]}/pipelines/#{ENV["CI_PIPELINE_ID"]}`)
+  p @event
   if ENV["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"] != ''
     @is_pull_request = ENV["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"]
   end
