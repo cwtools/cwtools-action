@@ -279,9 +279,6 @@ def run_gitlab
     STDERR.puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
     fail("There was an unhandled exception. Exiting with a non-zero error code...")
   end
-  if conclusion == "failure"
-    fail("At least one failure.")
-  end
 end
 
 def run_github
