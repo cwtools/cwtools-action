@@ -102,7 +102,7 @@ if [ $CW_CI_ENV = "gitlab" ]; then
   cd $CW_WORKSPACE
   if [ -f errors.txt ]; then
     echo "Running reviewdog on $PWD/errors.txt..."
-    if cat errors.txt | reviewdog -efm="%f:%l:%c:%t:%m" -name="$CW_CHECKNAME" -reporter=gitlab-mr-discussion | grep -q ":E:"; then
+    if cat errors.txt | reviewdog -efm="%f:%l:%c:%t:%m" -name="$CW_CHECKNAME" -reporter=gitlab-mr-discussion | grep -m 1 -q ":E:"; then
       echo "At least one error in annotated files! Exiting with a non-zero error code..."
       exit 1
     fi
