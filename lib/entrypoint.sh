@@ -29,7 +29,7 @@ elif [ -n "$CI_PROJECT_DIR" ]; then
       export INPUT_RULESREF='master'
   fi
   if [ -z "$INPUT_CHANGEDFILESONLY" ] || [ "$INPUT_CHANGEDFILESONLY" = "" ]; then
-      export INPUT_CHANGEDFILESONLY='0' # this is disabled for gitlab anyway
+      export INPUT_CHANGEDFILESONLY='1' # this is disabled for gitlab anyway
   fi
   if [ -z "$INPUT_SUPPRESSEDOFFENCECATEGORIES" ] || [ "$INPUT_SUPPRESSEDOFFENCECATEGORIES" = "" ]; then
       export INPUT_SUPPRESSEDOFFENCECATEGORIES='{"failure":[], "warning":[], "notice":[]}'

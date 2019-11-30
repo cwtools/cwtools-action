@@ -48,7 +48,7 @@ if @CW_CI_ENV == "github"
     @CHANGED_ONLY = true
   end
 elsif @CW_CI_ENV == "gitlab"
-  @CHANGED_ONLY = false
+  @CHANGED_ONLY = true
 end
 
 if @CACHE_FULL == ''
@@ -82,12 +82,13 @@ end
   "notice" => 'I',
 }
 
+@is_pull_request = false
+
 if @CW_CI_ENV == "github"
   @event = JSON.parse(File.read(@CW_EVENT_PATH))
   @repository = @event["repository"]
   @owner = @repository["owner"]["login"]
   @repo = @repository["name"]
-  @is_pull_request = false
   unless @event["pull_request"].nil?
     @CW_SHA = @event["pull_request"]["head"]["sha"]
     @is_pull_request = [@event["pull_request"]["base"]["ref"], @event["pull_request"]["head"]["ref"]]
@@ -98,16 +99,30 @@ if @CW_CI_ENV == "github"
     "Authorization": "Bearer #{@CW_TOKEN}",
     "User-Agent": 'cwtools-action'
   }
+elsif @CW_CI_ENV == "gitlab"
+  @event = JSON.parse(`curl --header "PRIVATE-TOKEN: #{ENV["CI_JOB_TOKEN"]}" #{ENV["CI_PIPELINE_URL"]}`)
+  if ENV["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"] != ''
+    @is_pull_request = ENV["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"]
+  end
 end
 
 def get_changed_files
   diff_output = nil
   Dir.chdir(@CW_WORKSPACE) do
-    if @is_pull_request
-      diff_output = `git log --name-only --pretty="" origin/#{@is_pull_request[0]}..origin/#{@is_pull_request[1]}`
-    else
-      before_commit = @event["before"]
-      diff_output = `git diff --name-only #{before_commit} #{@CW_SHA}`
+    if @CW_CI_ENV == "github"
+      if @is_pull_request
+        diff_output = `git log --name-only --pretty="" origin/#{@is_pull_request[0]}..origin/#{@is_pull_request[1]}`
+      else
+        before_commit = @event["before"]
+        diff_output = `git diff --name-only #{before_commit} #{@CW_SHA}`
+      end
+    elsif @CW_CI_ENV == "gitlab"
+      if @is_pull_request
+        diff_output = `git diff --name-only origin/#{@is_pull_request}`
+      else
+        before_commit = @event["before_sha"]
+        diff_output = `git diff --name-only #{before_commit} #{@CW_SHA}`
+      end
     end
   end
   unless diff_output.nil?
@@ -261,6 +276,7 @@ end
 
 def run_gitlab
   begin
+    get_changed_files()
     results = run_cwtools()
     conclusion = results["conclusion"]
     output = results["output"]
@@ -275,6 +291,9 @@ def run_gitlab
     STDERR.puts "Error during processing: #{$!}"
     STDERR.puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
     fail("There was an unhandled exception. Exiting with a non-zero error code...")
+  end
+  if conclusion == "failure"
+    fail("At least one failure.")
   end
 end
 
