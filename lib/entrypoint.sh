@@ -12,6 +12,7 @@ if [ -n "$GITHUB_SHA" ]; then
   export CW_SHA=$GITHUB_SHA
 elif [ -n "$CI_PROJECT_DIR" ]; then
   export CW_CI_ENV="gitlab"
+  export CW_TOKEN=$CI_JOB_TOKEN
   export CW_WORKSPACE=$CI_PROJECT_DIR
   if [ -z "$INPUT_MODPATH" ] || [ "$INPUT_MODPATH" = "" ]; then
       export INPUT_MODPATH=''
