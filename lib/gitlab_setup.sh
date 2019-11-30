@@ -14,6 +14,8 @@ fi
 apt-get update && apt-get -y install ruby bash git wget p7zip
 wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/$INPUT_REVIEWDOGREF/install.sh| sh -s -- -b /usr/local/bin/
 
+git fetch --depth=1 origin $CI_MERGE_REQUEST_TARGET_BRANCH_SHA
+
 cd /
 git clone --depth=1  --single-branch --branch $INPUT_CWTOOLSACTIONREF https://github.com/cwtools/cwtools-action.git action
 chmod +x /action/lib/entrypoint.sh
