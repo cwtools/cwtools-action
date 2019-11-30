@@ -1,0 +1,33 @@
+# cwtools-action
+# https://github.com/cwtools/cwtools-action
+# Example GitLab CI workflow file for a Stellaris project
+# Will trigger when a merge request to master is created
+# Rename to .gitlab-ci.yml and put in root of your repository
+
+image: mcr.microsoft.com/dotnet/core/sdk:3.0
+
+variables:
+  DOCKER_DRIVER: overlay2
+  INPUT_GAME: "stellaris" # Change to the game used in your project
+  # Variables below are optional and set to their default values - uncomment and change them if you wish so
+  #INPUT_MODPATH: ''
+  #INPUT_CACHE: ''
+  #INPUT_LOCLANGUAGES: 'english'
+  #INPUT_RULES: ''
+  #INPUT_RULESREF: 'master'
+  #INPUT_SUPPRESSEDOFFENCECATEGORIES: '{"failure":[], "warning":[], "notice":[]}'
+  #INPUT_CWTOOLSCLIVERSION: ''
+
+stages:
+  - CWTools_CI
+          
+CWTools_CI:
+    stage: CWTools_CI
+    script:
+        - wget -O - -q https://raw.githubusercontent.com/cwtools/cwtools-action/gitlab-integration/lib/gitlab_setup.sh| sh -s [vX.Y.Z]
+
+    artifacts:
+        expose_as: 'CWTools output'
+        paths:
+            - output.json
+        when: always

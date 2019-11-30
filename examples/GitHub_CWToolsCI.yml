@@ -1,0 +1,52 @@
+# cwtools-action
+# https://github.com/cwtools/cwtools-action
+# Example GitHub Actions workflow file for a Hearts of Iron IV project
+# Will trigger on pushes to master, or when a pull request is made or updated
+# Will only trigger if files that can be checked by CWTools are pushed
+# Put in .github/workflows (create folders if they are not there)
+
+name: CWTools CI
+
+on:
+  push:
+    branches:    
+    - master
+    paths:
+    - '*/**/*.txt'
+    - '*/**/*.yml'
+    - '*/**/*.gfx'
+    - '*/**/*.gui'
+    - 'localisation/**'
+    - '!.*/**'
+    - '!tutorial/**'
+    - '!changelog.txt'
+    - '!interface/credits.txt'
+  pull_request:
+    paths:
+    - '*/**/*.txt'
+    - '*/**/*.yml'
+    - '*/**/*.gfx'
+    - '*/**/*.gui'
+    - 'localisation/**'
+    - '!.*/**'
+    - '!tutorial/**'
+    - '!changelog.txt'
+    - '!interface/credits.txt'
+
+jobs:
+  cwtools_job:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: cwtools/cwtools-action@v1.0.0
+      with:
+        game: hoi4
+        locLanguages: "english russian" # change this to what localisation languages your mod supports 
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload output.json
+      if: always()
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: cwtools_output
+        path: output.json
