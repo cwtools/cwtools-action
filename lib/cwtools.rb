@@ -48,7 +48,7 @@ if @CW_CI_ENV == "github"
     @CHANGED_ONLY = true
   end
 elsif @CW_CI_ENV == "gitlab"
-  @CHANGED_ONLY = true
+  @CHANGED_ONLY = false
 end
 
 if @CACHE_FULL == ''
@@ -99,11 +99,6 @@ if @CW_CI_ENV == "github"
     "Authorization": "Bearer #{@CW_TOKEN}",
     "User-Agent": 'cwtools-action'
   }
-elsif @CW_CI_ENV == "gitlab"
-  @event = JSON.parse(`curl "https://www.gitlab.com/api/v4/projects/#{ENV["CI_PROJECT_ID"]}/pipelines/#{ENV["CI_PIPELINE_ID"]}"`)
-  if ENV["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"] != ''
-    @is_pull_request = ENV["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"]
-  end
 end
 
 def get_changed_files
@@ -114,13 +109,6 @@ def get_changed_files
         diff_output = `git log --name-only --pretty="" origin/#{@is_pull_request[0]}..origin/#{@is_pull_request[1]}`
       else
         before_commit = @event["before"]
-        diff_output = `git diff --name-only #{before_commit} #{@CW_SHA}`
-      end
-    elsif @CW_CI_ENV == "gitlab"
-      if @is_pull_request
-        diff_output = `git diff --name-only origin/#{@is_pull_request}`
-      else
-        before_commit = @event["before_sha"]
         diff_output = `git diff --name-only #{before_commit} #{@CW_SHA}`
       end
     end
@@ -276,7 +264,6 @@ end
 
 def run_gitlab
   begin
-    get_changed_files()
     results = run_cwtools()
     conclusion = results["conclusion"]
     output = results["output"]
