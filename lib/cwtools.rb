@@ -118,9 +118,11 @@ def get_changed_files
       end
     elsif @CW_CI_ENV == "gitlab"
       if @is_pull_request
+        STDERR.puts("git diff --name-only origin/#{@is_pull_request}")
         diff_output = `git diff --name-only origin/#{@is_pull_request}`
       else
         before_commit = @event["before_sha"]
+        STDERR.puts("git diff --name-only #{before_commit} #{@CW_SHA}")
         diff_output = `git diff --name-only #{before_commit} #{@CW_SHA}`
       end
     end
