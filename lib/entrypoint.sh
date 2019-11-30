@@ -102,7 +102,10 @@ if [ $CW_CI_ENV = "gitlab" ]; then
   cd $CW_WORKSPACE
   if [ -f errors.txt ]; then
     echo "Running reviewdog on $PWD/errors.txt..."
-    cat errors.txt | reviewdog -efm="%f:%l:%c:%t:%m" -name="$CW_CHECKNAME" -reporter=gitlab-mr-discussion
+    if cat errors.txt | reviewdog -efm="%f:%l:%c:%t:%m" -name="$CW_CHECKNAME" -reporter=gitlab-mr-discussion | grep -q ":E:"; then
+      echo "At least one error in annotated files!"
+      exit 1
+    fi
   else
     echo "errors.txt doesn't exist in $CW_WORKSPACE!"
     exit 1
