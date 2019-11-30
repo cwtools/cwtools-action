@@ -100,7 +100,7 @@ if @CW_CI_ENV == "github"
     "User-Agent": 'cwtools-action'
   }
 elsif @CW_CI_ENV == "gitlab"
-  @event = JSON.parse(File.read("https://gitlab.com/api/v4/projects/#{ENV["CI_PROJECT_ID"]}/pipelines/#{ENV["CI_PIPELINE_ID"]}"))
+  @event = JSON.parse(File.read("https://www.gitlab.com/api/v4/projects/#{ENV["CI_PROJECT_ID"]}/pipelines/#{ENV["CI_PIPELINE_ID"]}"))
   if ENV["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"] != ''
     @is_pull_request = ENV["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"]
   end
