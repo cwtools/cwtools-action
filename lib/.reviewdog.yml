@@ -1,0 +1,6 @@
+runner:
+  cwtools:
+    cmd: cat errors.txt
+    errorformat:
+      - "%Z%f:%l:%c:%t:%E%m"
+      - "%+C%m"

@@ -10,6 +10,8 @@ It will also insert them as inline feedback into your PRs ("Files changed" tab):
 
 ## Setup
 
+**Gitlab:** Can't use github? Click [here](#gitlab) for Gitlab installation instructions .
+
 In most cases, no setup is required beyond adding the following workflow yml file to your project (`.github/workflows` folder) and setting the correct game. See below for advanced configuration and an explanation of the tools used.
 
 The following games require no further setup:
@@ -108,6 +110,19 @@ Which languages to check localisation for, space separated, lowercase (eg. `engl
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+### vanillaMode (optional)
+
+Whether to not use cache, and instead treat the project as a vanilla game installation folder - if you are a modder, you probably should not be using this. If True, cache input will be ignored (Default: False, set to anything other than 0 or blank for True)
+
+```yml
+    - uses: cwtools/cwtools-action@v1.0.0
+      with:
+        game: hoi4
+        vanillaMode: "1"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ### rules (optional)
 
 What rules repository to use (Default: `https://github.com/cwtools/cwtools-$INPUT_GAME-config.git`)
@@ -159,6 +174,45 @@ You can choose to suppress annotations with chosen CWTools offence category IDs 
       env:
         default: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+### CWToolsCLIVersion (optional)
+
+Which CWTools.CLI version to use (Default: latest stable).
+
+```yml
+    - uses: cwtools/cwtools-action@v1.0.0
+      with:
+        game: hoi4
+        CWToolsCLIVersion: '0.0.7'
+      env:
+        default: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Gitlab
+
+**Due to limitations with GitLab, this currently only works for merge requests to master**
+
+[](gitlab)Running this action on Gitlab is a bit more involved, requiring the creation of a bot account. It is also limited to providing comments on pull requests as shown here:
+
+![Gitlab example](etc/cwtools_gitlab_pr_example.png)
+
+### Setting up the bot account
+
+1. Create a new Gitlab account for this "bot" and give it "Reporter" access to your project.
+2. Log into the account, browse to [the Personal Access Token page](https://gitlab.com/profile/personal_access_tokens) and generate a PAT with "api" scope. Make a note of the token.
+3. Log back into your primary account.
+4. Browse to your Project and go to "Settings", "CI / CD", and open the section "Variables".
+5. Create a variable called "REVIEWDOG_GITLAB_API_TOKEN". Put the PAT generated above as the Value, then set it as "Masked" but **not** Protected.
+6. Press "Save variables".
+
+**Please note:** This PAT gives access to all projects the bot can access. If somebody gets access to your pipeline logs, it's possible (although not likely) that they could access the token.
+
+### Configuring gitlab-ci
+
+1. In the root of your project create a file called `.gitlab-ci.yml`
+2. Copy the contents of the example file [GitLab_CWToolsCI.yml](examples/GitLab_CWToolsCI.yml), found in /examples, into it.
+3. Configure the variables if desired (see above).
+4. Create a merge request and check it works!
 
 ## How this works
 
