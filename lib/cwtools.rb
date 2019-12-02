@@ -133,7 +133,7 @@ def create_github_check
   resp = http.post(path, body.to_json, @headers)
 
   if resp.code.to_i >= 300
-    STDERR.puts JSON.pretty_generate(resp.body)
+    $stderr.puts JSON.pretty_generate(resp.body)
     raise resp.message
   end
 
@@ -164,7 +164,7 @@ def update_github_check(id, conclusion, output)
   resp = http.patch(path, body.to_json, @headers)
 
   if resp.code.to_i >= 300
-    STDERR.puts JSON.pretty_generate(resp.body)
+    $stderr.puts JSON.pretty_generate(resp.body)
     raise resp.message
   end
 end
@@ -179,21 +179,24 @@ end
 def run_cwtools
   annotations = []
   errors = nil
-  STDERR.puts "Running CWToolsCLI now..."
+  $stderr.puts "Running CWToolsCLI now..."
   Dir.chdir(@CW_WORKSPACE) do
     if @VANILLA_MODE
-      STDERR.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --reporttype json --scope vanilla --outputfile output.json --languages #{@LOC_LANGUAGES} all"
+      $stderr.puts "Vanilla mode..."
+      $stderr.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --reporttype json --scope vanilla --outputfile output.json --languages #{@LOC_LANGUAGES} all"
       `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@CW_WORKSPACE}#{@MOD_PATH}" --rulespath "/src/cwtools-#{@GAME}-config" validate --reporttype json --scope vanilla --outputfile output.json --languages #{@LOC_LANGUAGES} all`  
     elsif !@CACHE_FULL
-      STDERR.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
+      $stderr.puts "Metadata cache mode..."
+      $stderr.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
       `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@CW_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`  
     else
-      STDERR.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
+      $stderr.puts "Full cache mode..."
+      $stderr.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
       `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@CW_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`
     end
     errors = JSON.parse(`cat output.json`)
   end
-  STDERR.puts "Done running CWToolsCLI..."
+  $stderr.puts "Done running CWToolsCLI..."
   conclusion = "success"
   count = { "failure" => 0, "warning" => 0, "notice" => 0 }
 
@@ -265,7 +268,7 @@ def run_gitlab
     results = run_cwtools()
     conclusion = results["conclusion"]
     output = results["output"]
-    STDERR.puts "Updating checks..."
+    $stderr.puts "Updating checks..."
     Dir.chdir(@CW_WORKSPACE) do
       file = File.open("errors.txt", "w")
       output.each do |o|
@@ -273,8 +276,8 @@ def run_gitlab
       end
     end
   rescue => e
-    STDERR.puts "Error during processing: #{$!}"
-    STDERR.puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
+    $stderr.puts "Error during processing: #{$!}"
+    $stderr.puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
     fail("There was an unhandled exception. Exiting with a non-zero error code...")
   end
 end
@@ -284,14 +287,14 @@ def run_github
     raise "CW_TOKEN environment variable has not been defined!"
   end
   if @is_pull_request
-    STDERR.puts "Is pull request..."
+    $stderr.puts "Is pull request..."
   else
-    STDERR.puts "Is commit..."
+    $stderr.puts "Is commit..."
   end
   if @CHANGED_ONLY
-    STDERR.puts "Annotating only changed files..."
+    $stderr.puts "Annotating only changed files..."
   else
-    STDERR.puts "Annotating all files..."
+    $stderr.puts "Annotating all files..."
   end
   id = create_github_check()
   begin
@@ -299,33 +302,33 @@ def run_github
     results = run_cwtools()
     conclusion = results["conclusion"]
     output = results["output"]
-    STDERR.puts "Updating checks..."
+    $stderr.puts "Updating checks..."
     output.each do |o|
       update_github_check(id, nil, o)
     end
     update_github_check(id, conclusion, nil)
   rescue => e
-    STDERR.puts "Error during processing: #{$!}"
-    STDERR.puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
+    $stderr.puts "Error during processing: #{$!}"
+    $stderr.puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
     update_github_check(id, "failure", nil)
     fail("There was an unhandled exception. Exiting with a non-zero error code...")
   end
 end
 
 def run
-  STDERR.puts "CWTOOLS CHECK"
-  STDERR.puts "CI ENVIROMENT: #{@CW_CI_ENV}"
+  $stderr.puts "CWTOOLS CHECK"
+  $stderr.puts "CI ENVIROMENT: #{@CW_CI_ENV}"
   if @CHANGED_ONLY
-    STDERR.puts "Annotate only changed files..."
+    $stderr.puts "Annotate only changed files..."
   else
-    STDERR.puts "Annotate all files..."
+    $stderr.puts "Annotate all files..."
   end
   if @CW_CI_ENV == "github"
     run_github()
   elsif @CW_CI_ENV == "gitlab"
     run_gitlab()
   end
-  STDERR.puts "RUBY SCRIPT FINISHED"
+  $stderr.puts "RUBY SCRIPT FINISHED"
 end
 
 run()
