@@ -40,22 +40,16 @@ require 'set'
 @MOD_PATH = ENV["INPUT_MODPATH"]
 @CHANGED_ONLY = ENV["INPUT_CHANGEDFILESONLY"]
 @CACHE_FULL = ENV["INPUT_CACHE"]
+@VANILLA_MODE = ENV["VANILLA_MODE"]
 
 if @CW_CI_ENV == "github"
-  if @CHANGED_ONLY == '0' || @CHANGED_ONLY.downcase == 'false'
-    @CHANGED_ONLY = false
-  else
-    @CHANGED_ONLY = true
-  end
+  @CHANGED_ONLY = !(@CHANGED_ONLY == '0' || @CHANGED_ONLY == '')
 elsif @CW_CI_ENV == "gitlab"
   @CHANGED_ONLY = false
 end
 
-if @CACHE_FULL == ''
-  @CACHE_FULL = false
-else
-  @CACHE_FULL = true
-end
+@CACHE_FULL = !(@CACHE_FULL == '')
+@VANILLA_MODE = !(@VANILLA_MODE == '0' || @VANILLA_MODE == '')
 
 if @MOD_PATH != ''
   @MOD_PATH = "/" + @MOD_PATH
@@ -187,7 +181,10 @@ def run_cwtools
   errors = nil
   STDERR.puts "Running CWToolsCLI now..."
   Dir.chdir(@CW_WORKSPACE) do
-    if !@CACHE_FULL
+    if @VANILLA_MODE
+      STDERR.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --reporttype json --scope vanilla --outputfile output.json --languages #{@LOC_LANGUAGES} all"
+      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@CW_WORKSPACE}#{@MOD_PATH}" --rulespath "/src/cwtools-#{@GAME}-config" validate --reporttype json --scope vanilla --outputfile output.json --languages #{@LOC_LANGUAGES} all`  
+    elsif !@CACHE_FULL
       STDERR.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
       `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@CW_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`  
     else

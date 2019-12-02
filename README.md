@@ -108,6 +108,19 @@ Which languages to check localisation for, space separated, lowercase (eg. `engl
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+### vanillaMode (optional)
+
+Whether to not use cache, and instead treat the project as a vanilla game installation folder - if you are a modder, you probably should not be using this. If True, cache input will be ignored (Default: False, set to anything other than 0 or blank for True)
+
+```yml
+    - uses: cwtools/cwtools-action@v1.0.0
+      with:
+        game: hoi4
+        vanillaMode: "1"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ### rules (optional)
 
 What rules repository to use (Default: `https://github.com/cwtools/cwtools-$INPUT_GAME-config.git`)

@@ -82,19 +82,23 @@ if [ "$INPUT_GAME" = "stellaris" ]; then
 fi
 
 cd /
-if [ -z "$INPUT_CACHE" ] || [ "$INPUT_CACHE" = "" ]; then
-  echo "Using metadata cache from 'cwtools/cwtools-cache-files'..."
-  echo "If git fails here, it is most likely because the selected game ($INPUT_GAME) is not yet supported in the 'cwtools/cwtools-cache-files'. In that case, use CWTools.CLI to generate a full cache of selected game and set it with the cache parameter. Consult README for more information."
-  git clone --depth=1  --single-branch --branch $INPUT_GAME https://github.com/cwtools/cwtools-cache-files.git cwtools-cache-files
-  mv -v cwtools-cache-files/$CWB_GAME.cwv.bz2 .
-else
-  echo "Using full game cache from '$CW_WORKSPACE/$INPUT_CACHE'..."
-  mv -v $CW_WORKSPACE/$INPUT_CACHE .
+if [ -z "$INPUT_VANILLAMODE" ] || [ "$INPUT_VANILLAMODE" = "" ] || [ "$INPUT_VANILLAMODE" = 0 ]; then
+  if [ -z "$INPUT_CACHE" ] || [ "$INPUT_CACHE" = "" ]; then
+    echo "Using metadata cache from 'cwtools/cwtools-cache-files'..."
+    echo "If git fails here, it is most likely because the selected game ($INPUT_GAME) is not yet supported in the 'cwtools/cwtools-cache-files'. In that case, use CWTools.CLI to generate a full cache of selected game and set it with the cache parameter. Consult README for more information."
+    git clone --depth=1  --single-branch --branch $INPUT_GAME https://github.com/cwtools/cwtools-cache-files.git cwtools-cache-files
+    mv -v cwtools-cache-files/$CWB_GAME.cwv.bz2 .
+  else
+    echo "Using full game cache from '$CW_WORKSPACE/$INPUT_CACHE'..."
+    mv -v $CW_WORKSPACE/$INPUT_CACHE .
 
-  if [ ! -f "$CWB_GAME.cwb.bz2" ]; then
-      echo "$CWB_GAME.cwb.bz2 does not exist!"
-      exit 1
+    if [ ! -f "$CWB_GAME.cwb.bz2" ]; then
+        echo "$CWB_GAME.cwb.bz2 does not exist!"
+        exit 1
+    fi
   fi
+else
+  echo "Vanilla mode, not using cache..."
 fi
 ruby /action/lib/cwtools.rb
 

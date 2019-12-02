@@ -15,6 +15,7 @@ variables:
   #INPUT_LOCLANGUAGES: 'english'
   #INPUT_RULES: ''
   #INPUT_RULESREF: 'master'
+  #INPUT_VANILLAMODE: '0'
   #INPUT_SUPPRESSEDOFFENCECATEGORIES: '{"failure":[], "warning":[], "notice":[]}'
   #INPUT_CWTOOLSCLIVERSION: ''
 

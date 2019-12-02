@@ -16,6 +16,10 @@ inputs:
     description: 'Path to the full cache file (cwb.bz2) in $GITHUB_WORKSPACE (root of repository). Use an empty string to use metadata from cwtools/cwtools-cache-files (Default: use metadata)'
     required: false
     default: ''
+  vanillaMode:
+    description: 'Whether to not use cache, and instead treat the project as a vanilla game installation folder - if you are a modder, you probably should not be using this. If True, cache input will be ignored (Default: False, set to anything other than 0 or blank for True)'
+    required: false
+    default: '0'
   locLanguages:
     description: 'Which languages to check localisation for, space separated, lowercase (eg. "english spanish russian"). Note: May be different from game to game. (Default: english)'
     required: false
@@ -29,7 +33,7 @@ inputs:
     required: false
     default: 'master'
   changedFilesOnly:
-    description: 'Whether to only push offences in changed files (Default: True, set to 0 for False)'
+    description: 'Whether to only push offences in changed files (Default: True, set to 0 or blank for False)'
     required: false
     default: '1'
   suppressedOffenceCategories:
