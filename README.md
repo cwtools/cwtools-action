@@ -10,7 +10,7 @@ It will also insert them as inline feedback into your PRs ("Files changed" tab):
 
 ## Setup
 
-**Gitlab:** Can't use github? Click [here](#gitlab) for Gitlab installation instructions .
+**GitHub:** Can't use GitHub? Click [here](#gitlab) for GitLab installation instructions .
 
 In most cases, no setup is required beyond adding the following workflow yml file to your project (`.github/workflows` folder) and setting the correct game. See below for advanced configuration and an explanation of the tools used.
 
@@ -164,7 +164,7 @@ By default will only annotate changed files in a push or a pull request. In orde
 
 ### suppressedOffenceCategories (optional)
 
-You can choose to suppress annotations with chosen CWTools offence category IDs (`CW###`) per Github severity type (failure, warning, notice).
+You can choose to suppress annotations with chosen CWTools offence category IDs (`CW###`) per GitHub severity type (failure, warning, notice).
 
 ```yml
     - uses: cwtools/cwtools-action@v1.0.0
@@ -188,17 +188,17 @@ Which CWTools.CLI version to use (Default: latest stable).
         default: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-## Gitlab
+## GitLab
 
 **Due to limitations with GitLab, this currently only works for merge requests to master**
 
-[](gitlab)Running this action on Gitlab is a bit more involved, requiring the creation of a bot account. It is also limited to providing comments on pull requests as shown here:
+[](gitlab)Running this action on GitLab is a bit more involved, requiring the creation of a bot account. It is also limited to providing comments on pull requests as shown here:
 
-![Gitlab example](etc/cwtools_gitlab_pr_example.png)
+![GitLab example](etc/cwtools_gitlab_pr_example.png)
 
 ### Setting up the bot account
 
-1. Create a new Gitlab account for this "bot" and give it "Reporter" access to your project.
+1. Create a new GitLab account for this "bot" and give it "Reporter" access to your project.
 2. Log into the account, browse to [the Personal Access Token page](https://gitlab.com/profile/personal_access_tokens) and generate a PAT with "api" scope. Make a note of the token.
 3. Log back into your primary account.
 4. Browse to your Project and go to "Settings", "CI / CD", and open the section "Variables".
