@@ -177,7 +177,11 @@ end
 
 def return_reviewdog_check(file, output)
   output["annotations"].each do |annotation|
-    file.puts "ZZZZ#{annotation["path"]}:#{annotation["start_line"]}:#{annotation["start_column"]}:#{@reviewdog_error_types[annotation["annotation_level"]]}:#{@reviewdog_annotation_levels[annotation["annotation_level"]]}#{annotation["message"]}"
+    if annotation["start_column"].nil?
+      startCol = 1
+    else
+      startCol = annotation["start_column"]
+    file.puts "ZZZZ#{annotation["path"]}:#{annotation["start_line"]}:#{startCol}:#{@reviewdog_error_types[annotation["annotation_level"]]}:#{@reviewdog_annotation_levels[annotation["annotation_level"]]}#{annotation["message"]}"
   end
 end
 
