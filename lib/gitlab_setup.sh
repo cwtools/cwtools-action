@@ -4,7 +4,7 @@ if [ -z "$INPUT_GAME" ] || [ "$INPUT_GAME" = "" ]; then
 fi
 
 if [ -z "$INPUT_CWTOOLSACTIONREF" ] || [ "$INPUT_CWTOOLSACTIONREF" = "" ]; then
-    INPUT_CWTOOLSACTIONREF="gitlab-integration"
+    INPUT_CWTOOLSACTIONREF="v1.0.0"
 fi
 
 if [ -z "$INPUT_REVIEWDOGREF" ] || [ "$INPUT_REVIEWDOGREF" = "" ]; then
