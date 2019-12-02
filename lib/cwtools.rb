@@ -182,7 +182,7 @@ def return_reviewdog_check(file, output)
     else
       startCol = annotation["start_column"]
     end
-    file.puts "ZZZZ#{annotation["path"]}:#{annotation["start_line"]}:#{startCol}:#{@reviewdog_error_types[annotation["annotation_level"]]}:#{@reviewdog_annotation_levels[annotation["annotation_level"]]}#{annotation["message"]}"
+    file.puts "#{annotation["path"]}:#{annotation["start_line"]}:#{startCol}:#{@reviewdog_error_types[annotation["annotation_level"]]}:#{@reviewdog_annotation_levels[annotation["annotation_level"]]}#{annotation["message"]}"
   end
 end
 
