@@ -190,6 +190,8 @@ Which CWTools.CLI version to use (Default: latest stable).
 
 ## Gitlab
 
+**Due to limitations with GitLab, this currently only works for merge requests to master**
+
 [](gitlab)Running this action on Gitlab is a bit more involved, requiring the creation of a bot account. It is also limited to providing comments on pull requests as shown here:
 
 ![Gitlab example](etc/cwtools_gitlab_pr_example.png)
