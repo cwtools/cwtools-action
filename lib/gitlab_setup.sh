@@ -4,7 +4,7 @@ if [ -z "$INPUT_GAME" ] || [ "$INPUT_GAME" = "" ]; then
 fi
 
 if [ -z "$INPUT_CWTOOLSACTIONREF" ] || [ "$INPUT_CWTOOLSACTIONREF" = "" ]; then
-    INPUT_CWTOOLSACTIONREF="gitlab-integration"
+    INPUT_CWTOOLSACTIONREF="gitlab-integration-testing"
 fi
 
 if [ -z "$INPUT_REVIEWDOGREF" ] || [ "$INPUT_REVIEWDOGREF" = "" ]; then
@@ -13,6 +13,10 @@ fi
 
 apt-get update && apt-get -y install ruby bash git wget p7zip
 wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/$INPUT_REVIEWDOGREF/install.sh| sh -s -- -b /usr/local/bin/
+
+git checkout $CI_DEFAULT_BRANCH
+git pull
+git checkout $CI_COMMIT_SHA
 
 cd /
 git clone --depth=1  --single-branch --branch $INPUT_CWTOOLSACTIONREF https://github.com/cwtools/cwtools-action.git action
