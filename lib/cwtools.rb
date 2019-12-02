@@ -318,11 +318,6 @@ end
 def run
   $stderr.puts "CWTOOLS CHECK"
   $stderr.puts "CI ENVIROMENT: #{@CW_CI_ENV}"
-  if @CHANGED_ONLY
-    $stderr.puts "Annotate only changed files..."
-  else
-    $stderr.puts "Annotate all files..."
-  end
   if @CW_CI_ENV == "github"
     run_github()
   elsif @CW_CI_ENV == "gitlab"
