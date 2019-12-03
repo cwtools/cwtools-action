@@ -214,6 +214,15 @@ Which CWTools.CLI version to use (Default: latest stable).
 3. Configure the variables if desired (see above).
 4. Create a merge request and check it works!
 
+#### GitLab self-hosted
+
+If you're running your own instance of GitLab, you'll need to set the following two variables in addition to those in the default template:
+
+```
+ - GITLAB_API: "https://example.gitlab.com/api/v4"
+ - REVIEWDOG_INSECURE_SKIP_VERIFY: true
+```
+
 ## How this works
 
 [CWTools](https://github.com/tboby/cwtools) is a .NET library that provides features to analyse and manipulate the scripting language used in Paradox Development Studio's games (PDXScript). This is mainly used in a VS Code extension, [cwtools-vscode](https://marketplace.visualstudio.com/items?itemName=tboby.cwtools-vscode). CWTools also provides a CLI tool [CWTools.CLI](https://www.nuget.org/packages/CWTools.CLI/) to allow automated anaylsis, which is what this action relies on.
