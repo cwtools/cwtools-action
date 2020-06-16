@@ -67,14 +67,10 @@ fi
 cd /
 mkdir -p /src
 if [ -z "$INPUT_RULES" ] || [ "$INPUT_RULES" = "" ]; then
-  git clone https://github.com/cwtools/cwtools-$INPUT_GAME-config.git /src/cwtools-$INPUT_GAME-config
+  git clone --depth 1 --single-branch --branch $INPUT_RULESREF https://github.com/cwtools/cwtools-$INPUT_GAME-config.git /src/cwtools-$INPUT_GAME-config
 else
-  git clone $INPUT_RULES /src/cwtools-$INPUT_GAME-config
+  git clone --depth 1 --single-branch --branch $INPUT_RULESREF $INPUT_RULES /src/cwtools-$INPUT_GAME-config
 fi
-
-cd /src/cwtools-$INPUT_GAME-config
-git fetch
-git checkout $INPUT_RULESREF
 
 CWB_GAME=$INPUT_GAME
 if [ "$INPUT_GAME" = "stellaris" ]; then
