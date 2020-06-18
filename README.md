@@ -175,6 +175,19 @@ You can choose to suppress annotations with chosen CWTools offence category IDs 
         default: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+### suppressedFiles (optional)
+
+You can choose to suppress annotations completely in certain files. Use paths from root of repository, make sure to have no trailing whitespace. Globbing is not supported.
+
+```yml
+    - uses: cwtools/cwtools-action@v1.0.0
+      with:
+        game: hoi4
+        suppressedFiles: '["common/scripted_effects/my_effects.txt", "events/EventFile.txt"]' # will completely suppress any annotations in those two files
+      env:
+        default: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ### CWToolsCLIVersion (optional)
 
 Which CWTools.CLI version to use (Default: latest stable).

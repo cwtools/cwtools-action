@@ -35,6 +35,7 @@ require 'set'
 @CW_CI_ENV = ENV["CW_CI_ENV"]
 
 @SUPPRESSED_OFFENCE_CATEGORIES = JSON.parse(ENV["INPUT_SUPPRESSEDOFFENCECATEGORIES"])
+@SUPPRESSED_FILES = JSON.parse(ENV["INPUT_SUPPRESSEDFILES"])
 @GAME = ENV["INPUT_GAME"]
 @LOC_LANGUAGES = ENV["INPUT_LOCLANGUAGES"]
 @MOD_PATH = ENV["INPUT_MODPATH"]
@@ -204,6 +205,9 @@ def run_cwtools
     path = file["file"]
     path = path.sub! @CW_WORKSPACE+"/", ''
     path = path.strip
+    if @SUPPRESSED_FILES.include?(path)
+      next
+    end
     offenses = file["errors"]
     if !@CHANGED_ONLY || @changed_files.include?(path)
       offenses.each do |offense|

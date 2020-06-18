@@ -40,6 +40,10 @@ inputs:
     description: 'What CWTools offence categories to suppress, in JSON format: {"failure":[], "warning":[], "notice":[]}'
     required: false
     default: '{"failure":[], "warning":[], "notice":[]}'
+  suppressedFiles:
+    description: 'Which files to completely ignore, in JSON format: ["path/from/root/repo/folder", "path/from/root/repo/folder"]'
+    required: false
+    default: '[]'
   CWToolsCLIVersion:
     description: 'Which CWTools.CLI version to use (Default: latest stable)'
     required: false

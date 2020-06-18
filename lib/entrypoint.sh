@@ -35,6 +35,9 @@ elif [ -n "$CI_PROJECT_DIR" ]; then
   if [ -z "$INPUT_SUPPRESSEDOFFENCECATEGORIES" ] || [ "$INPUT_SUPPRESSEDOFFENCECATEGORIES" = "" ]; then
       export INPUT_SUPPRESSEDOFFENCECATEGORIES='{"failure":[], "warning":[], "notice":[]}'
   fi
+  if [ -z "$INPUT_SUPPRESSEDFILES" ] || [ "$INPUT_SUPPRESSEDFILES" = "" ]; then
+      export INPUT_SUPPRESSEDFILES='[]'
+  fi
   if [ -z "$INPUT_CWTOOLSCLIVERSION" ] || [ "$INPUT_CWTOOLSCLIVERSION" = "" ]; then
       export INPUT_CWTOOLSCLIVERSION=''
   fi
