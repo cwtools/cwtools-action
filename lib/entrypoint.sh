@@ -52,6 +52,7 @@ case $INPUT_GAME in
   "vic2") echo "Game selected as $INPUT_GAME..." ;;
   "ir") echo "Game selected as $INPUT_GAME..." ;;
   "stellaris") echo "Game selected as $INPUT_GAME..." ;;
+  "ck3") echo "Game selected as $INPUT_GAME..." ;;
   *) echo "Wrong game, $INPUT_GAME is not valid!" 1>&2 ; exit 1 # terminate and indicate error
 esac
 
