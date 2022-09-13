@@ -100,6 +100,7 @@ if [ -z "$INPUT_VANILLAMODE" ] || [ "$INPUT_VANILLAMODE" = "" ] || [ "$INPUT_VAN
 else
   echo "Vanilla mode, not using cache..."
 fi
+git branch -l
 ruby /action/lib/cwtools.rb
 
 if [ $CW_CI_ENV = "gitlab" ]; then
