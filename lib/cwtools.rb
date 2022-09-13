@@ -102,7 +102,7 @@ def get_changed_files
   Dir.chdir(@CW_WORKSPACE) do
     if @CW_CI_ENV == "github"
       if @is_pull_request
-        diff_output = `git log --name-only --pretty="" origin/#{@is_pull_request[0]}..origin/#{@is_pull_request[1]}`
+        diff_output = `git log --name-only --pretty="" "origin/#{@is_pull_request[0]}".."origin/#{@is_pull_request[1]}"`
       else
         before_commit = @event["before"]
         diff_output = `git diff --name-only #{before_commit} #{@CW_SHA}`
