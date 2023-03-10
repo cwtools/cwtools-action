@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1 # required
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
       env:
@@ -44,14 +44,14 @@ This action will create a new job called "CWTools", which will be used to annota
 The full `output.json` log is saved to `$GITHUB_WORKSPACE`, and can be recovered with [actions/upload-artifact](https://github.com/actions/upload-artifact).
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload artifact
       if: always() # so even if the check fails, the log is uploaded
-      uses: actions/upload-artifact@v1.0.0
+      uses: actions/upload-artifact@v1.1.0
       with:
         name: cwtools_output
         path: output.json
@@ -64,7 +64,7 @@ The full `output.json` log is saved to `$GITHUB_WORKSPACE`, and can be recovered
 What game to use. Allowed values: `hoi4`, `ck2`, `eu4`, `ir`, `stellaris`, `vic2`.
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
       env:
@@ -76,7 +76,7 @@ What game to use. Allowed values: `hoi4`, `ck2`, `eu4`, `ir`, `stellaris`, `vic2
 Path to the mod folder in `$GITHUB_WORKSPACE` (root of repository). (Default: "" - root of repository itself)
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
         modPath: "mod_folder"
@@ -89,7 +89,7 @@ Path to the mod folder in `$GITHUB_WORKSPACE` (root of repository). (Default: ""
 Path to the full cache file (`cwb.bz2`) in `$GITHUB_WORKSPACE` (root of repository). Use an empty string to use metadata from cwtools/cwtools-cache-files (Default: use metadata)
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
         cache: "cache/hoi4.cwb.bz2"
@@ -102,7 +102,7 @@ Path to the full cache file (`cwb.bz2`) in `$GITHUB_WORKSPACE` (root of reposito
 Which languages to check localisation for, space separated, lowercase (eg. `english spanish russian`). Note: May be different from game to game. (Default: `english`)
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
         locLanguages: "english spanish russian"
@@ -115,7 +115,7 @@ Which languages to check localisation for, space separated, lowercase (eg. `engl
 Whether to not use cache, and instead treat the project as a vanilla game installation folder - if you are a modder, you probably should not be using this. If True, cache input will be ignored (Default: False, set to anything other than 0 or blank for True)
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
         vanillaMode: "1"
@@ -128,7 +128,7 @@ Whether to not use cache, and instead treat the project as a vanilla game instal
 What rules repository to use (Default: `https://github.com/cwtools/cwtools-$INPUT_GAME-config.git`)
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
         rules: "https://github.com/Yard1/cwtools-hoi4-config.git"
@@ -141,7 +141,7 @@ What rules repository to use (Default: `https://github.com/cwtools/cwtools-$INPU
 What ref on rules repo to checkout (Default: `master`)
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
         rulesRef: "1.0.0"
@@ -154,7 +154,7 @@ What ref on rules repo to checkout (Default: `master`)
 By default will only annotate changed files in a push or a pull request. In order to annotate all files set `changedFilesOnly` input to `"0"`.
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
         changedFilesOnly: "0"
@@ -167,7 +167,7 @@ By default will only annotate changed files in a push or a pull request. In orde
 You can choose to suppress annotations with chosen CWTools offence category IDs (`CW###`) per GitHub severity type (failure, warning, notice).
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
         suppressedOffenceCategories: '{"failure":["CW110", "CW210"], "warning":[], "notice":[]}' # will suppress CW110 and CW210 category failures, but will show those for warnings and notices
@@ -180,7 +180,7 @@ You can choose to suppress annotations with chosen CWTools offence category IDs 
 You can choose to suppress annotations completely in certain files. Use paths from root of repository, make sure to have no trailing whitespace. Globbing is not supported.
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
         suppressedFiles: '["common/scripted_effects/my_effects.txt", "events/EventFile.txt"]' # will completely suppress any annotations in those two files
@@ -193,7 +193,7 @@ You can choose to suppress annotations completely in certain files. Use paths fr
 Which CWTools.CLI version to use (Default: latest stable).
 
 ```yml
-    - uses: cwtools/cwtools-action@v1.0.0
+    - uses: cwtools/cwtools-action@v1.1.0
       with:
         game: hoi4
         CWToolsCLIVersion: '0.0.7'
