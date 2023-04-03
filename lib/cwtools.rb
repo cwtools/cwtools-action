@@ -42,6 +42,7 @@ require 'set'
 @CHANGED_ONLY = ENV["INPUT_CHANGEDFILESONLY"]
 @CACHE_FULL = ENV["INPUT_CACHE"]
 @VANILLA_MODE = ENV["INPUT_VANILLAMODE"]
+@CACHE_FILE_NAME = ENV["CACHE_FILE_NAME"]
 
 if @CW_CI_ENV == "github"
   @CHANGED_ONLY = !(@CHANGED_ONLY == '0' || @CHANGED_ONLY == '')
@@ -192,8 +193,8 @@ def run_cwtools
       `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@CW_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwv.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype metadata --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`  
     else
       $stderr.puts "Full cache mode..."
-      $stderr.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
-      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@CW_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{(@GAME == "stellaris") ? "stl" : @GAME}.cwb.bz2" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`
+      $stderr.puts "cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory \"#{@CW_WORKSPACE}#{@MOD_PATH}\" --cachefile \"/#{@CACHE_FILE_NAME}\" --rulespath \"/src/cwtools-#{@GAME}-config\" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all"
+      `cwtools --game #{(@GAME == "stellaris") ? "stl" : @GAME} --directory "#{@CW_WORKSPACE}#{@MOD_PATH}" --cachefile "/#{@CACHE_FILE_NAME}" --rulespath "/src/cwtools-#{@GAME}-config" validate --cachetype full --reporttype json --scope mods --outputfile output.json --languages #{@LOC_LANGUAGES} all`
     end
     errors = JSON.parse(`cat output.json`)
   end
